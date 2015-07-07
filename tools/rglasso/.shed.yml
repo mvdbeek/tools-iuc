@@ -7,3 +7,5 @@ name: rglasso_1_9_8
 owner: fubar
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/rglasso
 type: unrestricted
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

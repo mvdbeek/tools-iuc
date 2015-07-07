@@ -7,3 +7,5 @@ long_description: |
   minimizing false-positive results. Together with a highly optimized implementation, it can merge millions of paired end reads within a couple of minutes on a 
   standard desktop computer. Repository-Maintainer: Björn Grüning
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/pear
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

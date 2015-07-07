@@ -12,3 +12,5 @@ categories:
   - Sequence Analysis
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/hmmer3
 type: unrestricted
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

@@ -9,3 +9,5 @@ name: htseq_bams_to_count_matrix
 owner: fubar
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/htseq
 type: unrestricted
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

@@ -15,3 +15,5 @@ name: rgrnastar
 owner: iuc
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/rgrnastar
 type: unrestricted
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/
