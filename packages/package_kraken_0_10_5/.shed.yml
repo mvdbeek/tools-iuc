@@ -13,3 +13,5 @@ long_description: 'Kraken is a system for assigning taxonomic labels to short
 homepage_url: https://github.com/galaxyproject/tools-iuc/
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/blob/master/packages/package_kraken_0_10_5/tool_dependencies.xml
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

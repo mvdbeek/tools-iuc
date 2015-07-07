@@ -10,3 +10,5 @@ long_description: 'CD-HIT AuxTools is a set of auxiliary programs that can be
 homepage_url: https://github.com/galaxyproject/tools-iuc/
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/blob/master/packages/package_cd_hit_auxtools_0_5_2012_03_07_fix_dan/tool_dependencies.xml
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

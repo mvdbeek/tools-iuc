@@ -29,4 +29,5 @@ long_description: 'HISAT is a fast and sensitive spliced alignment program.
   on the command line under Linux, Mac OS X and Windows.'
 homepage_url: https://github.com/galaxyproject/tools-iuc/
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/blob/master/packages/package_hisat_0_1_6/tool_dependencies.xml
-type: tool_dependency_definition
+type: tool_dependency_definitiontoolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

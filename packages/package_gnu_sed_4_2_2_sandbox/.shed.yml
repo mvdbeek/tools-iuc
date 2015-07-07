@@ -18,3 +18,5 @@ name: package_gnu_sed_4_2_2_sandbox
 owner: iuc
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/packages/package_gnu_sed_4_2_2_sandbox
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

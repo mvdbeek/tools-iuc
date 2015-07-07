@@ -11,3 +11,5 @@ name: package_r_3_0_1
 owner: iuc
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/packages/package_r_3_0_1
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

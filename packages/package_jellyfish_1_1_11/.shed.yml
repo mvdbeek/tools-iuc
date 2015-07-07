@@ -12,3 +12,5 @@ long_description: 'JELLYFISH is a tool for fast, memory-efficient counting of k-
 homepage_url: https://github.com/galaxyproject/tools-iuc/
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/blob/master/packages/package_jellyfish_1_11_11/tool_dependencies.xml
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

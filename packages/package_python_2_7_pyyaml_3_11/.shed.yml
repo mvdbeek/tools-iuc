@@ -5,4 +5,5 @@ description: Contains a tool dependency definition that downloads and compiles v
 name: package_python_2_7_pyyaml_3_11
 owner: iuc
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/packages/package_python_2_7_pyyaml_3_11
-type: tool_dependency_definition
+type: tool_dependency_definitiontoolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

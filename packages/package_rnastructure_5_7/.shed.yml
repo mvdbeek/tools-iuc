@@ -21,3 +21,5 @@ type: tool_dependency_definition
 categories: 
  - Tool Dependency Packages
  - Sequence Analysis
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

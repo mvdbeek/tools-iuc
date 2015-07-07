@@ -10,3 +10,5 @@ owner: iuc
 name: package_meme_4_10_0
 remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/package/package_meme_4_10_0
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

@@ -16,3 +16,5 @@ name: package_bcftools_1_2
 owner: iuc
 remote_repository_url: https://github.com/davebx/tools-iuc/blob/master/packages/package_bcftools_1_2/tool_dependencies.xml
 type: tool_dependency_definition
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/

@@ -13,3 +13,5 @@ type: tool_dependency_definition
 categories: 
  - Tool Dependency Packages
  - Graphics
+toolshed:
+- https://lbcd41.snv.jussieu.fr/toolshed/
