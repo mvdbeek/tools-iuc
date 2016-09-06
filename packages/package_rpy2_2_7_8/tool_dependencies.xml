@@ -6,6 +6,10 @@
     <package name="readline" version="6.2">
         <repository name="package_readline_6_2" owner="iuc" prior_installation_required="True" />
     </package>
+    <package name="six" version="1.10.0">
+        <repository name="package_python_2_7_six_1_10_0" owner="iuc" prior_installation_required="True" />
+    </package>
+
     <package name="rpy2" version="2.7.8">
         <install version="1.0">
             <actions>
@@ -18,6 +22,9 @@
                     </repository>
                     <repository name="package_r_3_2_1" owner="iuc">
                         <package name="R" version="3.2.1" />
+                    </repository>
+                    <repository name="package_python_2_7_six_1_10_0" owner="iuc">
+                        <package name="six" version="1.10.0" />
                     </repository>
                 </action>
 
