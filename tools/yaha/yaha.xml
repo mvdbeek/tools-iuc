@@ -1,0 +1,246 @@
+<tool id="yaha" name="yaha" version="0.1.83">
+    <description>fast and flexible long-read alignment with optimal breakpoint detection</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <requirements>
+        <requirement type="package" version="0.1.83">yaha</requirement>
+        <requirement type="package" version="0.6.5">sambamba</requirement>
+    </requirements>
+    <version_command><![CDATA[yaha 2>&1| head -n1]]></version_command>
+    <command detect_errors="aggressive"><![CDATA[
+        #if $reference_genome.reference_genome_source == "history" or "reference":
+            #if $reference_genome.reference_genome_source == "history":
+                ln -f -s "$reference_genome.history_item" genome.fa &&
+            #elif $reference_genome.reference_genome_source == "reference":
+                ln -f -s "$reference_genome.fasta_item" genome.fa &&
+            #end if
+            yaha -g genome.fa -H $reference_genome.maxHitsIndex -L $reference_genome.wordLenIndex -S $reference_genome.skipDistanceIndex &&
+            #set maxHitsIndex = "%s%s" % ("0" * (5 - len(str($reference_genome.maxHitsIndex))), $reference_genome.maxHitsIndex)
+            #set skipdist = $reference_genome.skipDistanceIndex if len(str($reference_genome.skipDistanceIndex)) > 1 else "0%s" % $reference_genome.skipDistanceIndex
+            #set wordLenIndex = $reference_genome.wordLenIndex if len(str($reference_genome.wordLenIndex)) > 1 else "0%s" % $reference_genome.wordLenIndex
+            #set index_path = "genome.X%s_%s_%sS" % ($wordLenIndex, $skipdist, $maxHitsIndex)
+        #else:
+            #set index_path = $reference_genome.index.fields.path
+        #end if
+        yaha
+        -x '$index_path'
+        -q '$q'
+        $outformat stdout
+        -t \${GALAXY_SLOTS:-1}
+        -BW $BW
+        -G $G
+        -H $H
+        -M $M
+        -MD $MD
+        -P $P
+        -X $X
+        #if $ags.use_ags == "yes":
+            -AGS Y
+            -GEC $ags.GEC
+            -GOC $ags.GOC
+            -MS $ags.MS
+            -RC $ags.RC
+        #else:
+            -AGS N
+        #end if
+        #if $oqc.use_oqc == "yes":
+             -OQC Y
+             -BP $oqc.BP
+             -MGDP $oqc.MGDP
+             -MNO $oqc.MNO
+        #else:
+             -OQC N
+        #end if
+        #if $fbs.use_fbs == "yes":
+             -FBS Y
+             -PRL $fbs.PRL
+             -PSS $fbs.PSS
+        #else:
+             -FBS N
+        #end if
+        | sambamba view -S -f bam /dev/stdin | sambamba sort -o '$alignment' -l 6 -t \${GALAXY_SLOTS:-1} /dev/stdin
+        ]]></command>
+    <inputs>
+        <param type="data" argument="q" label="Fastq reads to align" format="fastqsanger" />
+        <conditional name="reference_genome">
+            <param help="Built-in references were created using default options" label="Source for the reference genome to align against" name="reference_genome_source" type="select">
+                <option selected="True" value="indexed">Use a built-in index</option>
+                <option value="history">Use a genome from history to build an index</option>
+                <option value="reference">Use a built-in genome to build an index</option>
+            </param>
+            <when value="indexed">
+                <param help="If your genome of interest is not listed, contact the Galaxy team" label="Select a reference genome" name="index" type="select">
+                    <options from_data_table="yaha_indexes">
+                        <filter column="2" type="sort_by" />
+                        <validator message="No genomes are available for the selected input dataset" type="no_options" />
+                    </options>
+                </param>
+            </when>
+            <when value="history">
+                <param format="fasta" label="Select the reference genome" name="history_item" type="data" />
+                <expand macro="index_parameter"/>
+            </when>
+            <when value="reference">
+                <param label="Select a reference genome" name="fasta_item" type="select">
+					<options from_data_table="fasta_indexes">
+                        <filter column="2" type="sort_by"/>
+					</options>
+				</param>
+                <expand macro="index_parameter"/>
+            </when>
+        </conditional>
+        <param name="outformat" type="select" label="Produce alignment with softclipping?">
+            <option value="-osh">Produce alignment with hard clipping</option>
+            <option value="-oss">Produce alignment with soft clipping</option>
+        </param>
+        <param type="integer" argument="-BW" value="5" min="0" label="BandWidth" help="band size on each side of the diagonal of banded Smith Waterman" />
+        <param type="integer" argument="-G" value="50" min="0" label="maxGap" help="maximum indel size allowed with a single alignment" />
+        <param type="integer" argument="-H" value="650" min="1" max="65525" label="maxHits" help="maximum times a seed is in the reference before it is ignored as too repetitive. To take advantage of k-mer sampling, use the same value of maxHits during index creation and alignment." />
+        <param type="integer" argument="-M" value="25" min="0" label="minMatch" help="minimum number of bases in seeds to start an alignment" />
+        <param type="integer" argument="-MD" value="50" min="0" label="MaxDesert" help="maximum number of contiguous bases without a seed before alignmment is split" />
+        <param type="float" argument="-P" value="0.9" min="0" label="minPercent-identity" help="minimum matching/alignment-length for a query to be included in output" />
+        <param type="integer" argument="-X" value="25" min="0" label="Xdropoff" help="maximum score dropoff before terminating alignment extensions" />
+        <conditional name="ags">
+            <param name="use_ags" type="select" label="Use Affine Gap Scoring?">
+                <option value="yes" selected="True">Yes</option>
+                <option value="no">No</option>
+            </param>
+            <when value="yes">
+				<param argument="-GEC" type="integer" value="2" min="0" label="GapExtensionCost" help="cost for extending a gap (indel)"/>
+				<param argument="-GOC" type="integer" value="5" min="0" label="GapOpenCost" help="cost for starting a new gap (indel)"/>
+                <param argument="-MS" type="integer" value="1" min="0" label="MatchScore" help="score added for each matching base"/>
+                <param argument="-RC" type="integer" value="3" min="0" label="ReplacementCost" help="score subtracted for each mismatched base"/>
+            </when>
+        <when value="no">
+        </when>
+    </conditional>
+        <conditional name="oqc">
+            <param name="use_oqc" type="select" label="Use Optimal Query Coverage Algorithm?" help="">
+                <option value="yes" selected="True">Yes (Find a set of alignments are found that optimally cover the query, using the remaining options)</option>
+                <option value="no">No (Output all alignments meeting above criteria)</option>
+            </param>
+            <when value="yes">
+                <param argument="-BP" type="integer" value="5" min="0" label="BreakpointPenalty" help="penalty for inserting a breakpoint in split-read alignment"/>
+                <param argument="-MGDP" type="integer" value="5" min="0" label="MaxGenomicDistancePenalty"/>
+                <param argument="-MNO" type="integer" value="25" min="0" label="MinNonOverlap" help="minimum number of unshared bases required in each split alignment"/>
+            </when>
+        <when value="no">
+        </when>
+    </conditional>
+        <conditional name="fbs">
+            <param name="use_fbs" type="select" label="Use Filter By Similarity Algorithm?" help="">
+                <option value="yes" selected="False">Yes (Output alignments similar to best alignment found using OQC.)</option>
+                <option value="no">No</option>
+            </param>
+            <when value="yes">
+                <param argument="-PRL" type="float" value="0.9" min="0" max="1" label="PercentReciprocalLength" help="minimum ratio of overlapping length between similar alignment"/>
+                <param argument="-PSS" type="float" value="0.9" min="0" max="1" label="PercentSimilarScore" help="minimum ratio of scores between similar alignments"/>
+            </when>
+        <when value="no">
+        </when>
+    </conditional>
+    </inputs>
+    <outputs>
+        <data name="alignment" format="bam" />
+    </outputs>
+    <tests>
+        <test>
+            <param name="q" value="input.fastq" ftype="fastqsanger"/>
+            <param name="reference_genome_source" value="history"/>
+            <param name="history_item" value="phiX.fa" ftype="fasta"/>
+            <output name="alignment" value="alignment.bam" ftype="bam"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+Summary
+-------
+
+*yaha* is an open source, flexible, sensitive and accurate DNA aligner
+designed for single-end reads. It supports three major modes of
+operation:
+
+1. The default “Optimal Query Coverage” (**-OQC**) mode reports the best
+   set of alignments that cover the length of each query.
+2. Using “Filter By Similarity” (**-FBS**), along with the best set of
+   alignments, *yaha* will also output alignments that are highly
+   similar to an alignment in the best set.
+3. Finally, *yaha* can output all the alignments found for each query.
+
+The **-OQC** and **-FBS** modes are specifically tuned to form split
+read mappings that can be used to accurately identify structural
+variation events (deletions, duplications, insertions or inversions)
+between the subject query and the reference genome.
+
+Usage
+-----
+
+**OPTIONS:** Default values enclosed in square brackets []
+
+::
+
+    Input/Output Options:
+    -g    FILE input genome file to use during index creation (FASTA or nib2)
+    -q    FILE input file of sequence reads to align (FASTA or FASTQ) [STDIN]
+    -osh  FILE output file for alignment output in SAM format with hard clipping(default) [STDOUT]
+    -oss  FILE output file for alignment output in SAM format with soft clipping [STDOUT]
+    -x    FILE reference index file to use during alignment
+    NOTE: At most one of -osh or -oss should be specified.
+
+    Index Creation Options:
+    -H    INT  maxHits: During index creation, seeds occuring more than maxHits times will be sampled [65565]
+    -L    INT  seedLength: Length of seed to use.  During alignment, seed length is taken from index file [15]
+    -S    INT  Skipdistance: Number of bases to skip ahead before forming next seed [1]
+
+    General Alignment Options:
+    -BW   INT  BandWidth: band size on each side of the diagonal of banded Smith Waterman [5]
+    -G    INT  maxGap: maximum indel size allowed with a single alignment [50]
+    -H    INT  maxHits: maximum times a seed is in the reference before it is ignored as too repetitive [650]
+    -M    INT  minMatch: minimum number of bases in seeds to start an alignment [25]
+    -MD   INT  MaxDesert: maximum number of contiguous bases without a seed before alignmment is split [50]
+    -P    REAL minPercent-identity: minimum matching/alignment-length for a query to be included in output [0.9]
+    -X    INT  Xdropoff: maximum score dropoff before terminating alignment extensions [25]
+    -t    INT  numThreads: number of threads used to parallel process reads [1]
+
+    Affine Gap Scoring Options:
+    If -AGS is off, a simple edit distance calculation is done.
+    If on, the remaining options are used:
+    -AGS  BOOL (Y|N) controls use of Affine Gap Scoring [Y].
+    -GEC  INT  GapExtensionCost: cost for extending a gap (indel) [2]
+    -GOC  INT  GapOpenCost: cost for starting a new gap (indel) [5]
+    -MS   INT  MatchScore: score added for each matching base [1]
+    -RC   INT  ReplacementCost: score subtracted for each mismatched base [3]
+
+    Optimal Query Coverage Options:
+    If -OQC if off, all alignments meeting above criteria are output.
+    If -OQC is on, a set of alignments are found that optimally cover the query, using the remaining options.
+    -OQC  BOOL (Y|N) controls use of the Optimal Query Coverage Algorithm.
+    -BP   INT BreakpointPenalty: penalty for inserting a breakpoint in split-read alignment [5]
+    -MGDP INT MaxGenomicDistancePenalty (5)]
+    -MNO  INT MinNonOverlap: minimum number of unshared bases required in each split alignment [minMatch]
+    NOTE: The total cost of adding a breakpoint in a split-read mapping is:
+      BP*MIN(MGDP, Log10(genomic distance between reference loci))
+
+    Filter By Similarity Options:
+    If -FBS is on, the remaining options are used.  An alignemnt must satisfy BOTH criteria to be "similar".
+    -FBS  BOOL (Y|N) controls output of alignments similar to best alignment found using OQC.
+    -PRL  REAL PercentReciprocalLength: minimum ratio of overlapping length between similar alignemnt [0.9]
+    -PSS  REAL PercentSimilarScore: minimum ratio of scores between similar alignments [0.9]
+
+See the `User Guide <https://www.dropbox.com/s/7j758vpbaskcq20/YAHA_User_Guide.0.1.83.pdf?dl=0>`__
+for more details on all options and their usage.
+
+| **Written by:** Greg Faust (gf4ea@virginia.edu)
+| `Ira Hall Lab, University of
+  Virginia <http://faculty.virginia.edu/irahall/>`__
+
+| **Please cite:**
+| `Faust G.G. and Hall I.M., "*YAHA*: fast and flexible long-read
+  alignment with optimal breakpoint detection," *Bioinformatics* Oct.
+  2012; **28**\ (19):
+  2417-2424. <http://bioinformatics.oxfordjournals.org/content/28/19/2417>`__
+        ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/bts456</citation>
+    </citations>
+</tool>

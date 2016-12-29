@@ -1,0 +1,20 @@
+categories:
+- Next Gen Mappers
+- Variant Analysis
+description:  yaha finds optimal split-read mappings on single-end queries.
+long_description: |
+  yaha is an open source, flexible, sensitive and accurate DNA aligner designed
+  for single-end reads. It supports three major modes of operation. The default
+  “Optimal Query Coverage” (-OQC) mode reports the best set of alignments that
+  cover the length of each query.  Using “Filter By Similarity” (-FBS), along
+  with the best set of alignments, yaha will also output alignments that are
+  highly similar to an alignment in the best set.  Finally, yaha can output all
+  the alignments found for each query.  The -OQC and -FBS modes are specifically
+  tuned to form split read mappings that can be used to accurately identify
+  structural variation events (deletions, duplications, insertions or inversions)
+  between the subject query and the reference genome.
+name: yaha
+owner: iuc
+homepage_url: https://github.com/GregoryFaust/yaha
+remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/yaha
+type: unrestricted

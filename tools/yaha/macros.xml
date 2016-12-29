@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<macros>
+    <xml name="index_parameter">
+        <param argument="-H" name="maxHitsIndex" type="integer" value="65525" min="1" max="65525" label="maxHits" help="K-mers that appear > maxHits times in the genome will be randomly sampled down to max-hits locations. To take advantage of k-mer sampling, use the same value of maxHits during index creation and alignment."/>
+        <param argument="-L" name="wordLenIndex" type="integer" value="15" min="1" max="15" label="wordLen" help="the size of k-mers used for seed hits"/>
+        <param argument="-S" name="skipDistanceIndex" type="integer" value="1" min="1" max="15" label="Skip-distance" help="the distance to skip ahead in the genome before forming the next k-mer to index. Skip-distance must be between 1 and wordLen (inclusive)">
+        </param>
+    </xml>
+</macros>
