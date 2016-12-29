@@ -21,7 +21,7 @@
             #set wordLenIndex = $reference_genome.wordLenIndex if len(str($reference_genome.wordLenIndex)) > 1 else "0%s" % $reference_genome.wordLenIndex
             #set index_path = "genome.X%s_%s_%sS" % ($wordLenIndex, $skipdist, $maxHitsIndex)
         #else:
-            #set index_path = $reference_genome.index.fields.path
+            #pass  ## augment with pre-built index if considered useful
         #end if
         yaha
         -x '$index_path'
@@ -65,7 +65,9 @@
         <param type="data" argument="q" label="Fastq reads to align" format="fastqsanger" />
         <conditional name="reference_genome">
             <param help="Built-in references were created using default options" label="Source for the reference genome to align against" name="reference_genome_source" type="select">
+                <!-- Write a datamanager if prebuilt genomes are important
                 <option selected="True" value="indexed">Use a built-in index</option>
+                -->
                 <option value="history">Use a genome from history to build an index</option>
                 <option value="reference">Use a built-in genome to build an index</option>
             </param>
