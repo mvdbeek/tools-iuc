@@ -13,7 +13,7 @@
             #if $reference_genome.reference_genome_source == "history":
                 ln -f -s "$reference_genome.history_item" genome.fa &&
             #elif $reference_genome.reference_genome_source == "reference":
-                ln -f -s "$reference_genome.fasta_item" genome.fa &&
+                ln -f -s "$reference_genome.fasta_item.fields.path" genome.fa &&
             #end if
             yaha -g genome.fa -H $reference_genome.maxHitsIndex -L $reference_genome.wordLenIndex -S $reference_genome.skipDistanceIndex &&
             #set maxHitsIndex = "%s%s" % ("0" * (5 - len(str($reference_genome.maxHitsIndex))), $reference_genome.maxHitsIndex)
