@@ -25,7 +25,11 @@
         #end if
         yaha
         -x '$index_path'
-        -q '$q'
+        #if str($readtype.single_or_paired) == "se":
+            -q '$reatype.input_single'
+        #else:
+            -q <(cat '$readtype.input_paired.forward' '$readtype.input_paired.reverse')
+        #end if
         $outformat stdout
         -t \${GALAXY_SLOTS:-1}
         -BW $BW
@@ -62,7 +66,18 @@
         | sambamba view -S -f bam /dev/stdin | sambamba sort -o '$alignment' -l 6 -t \${GALAXY_SLOTS:-1} /dev/stdin
         ]]></command>
     <inputs>
-        <param type="data" argument="q" label="Fastq reads to align" format="fastqsanger" />
+        <conditional name="readtype">
+            <param name="single_or_paired" type="select" label="Single-end or paired-end reads?" help="Note: yaha does not take mate-pair information into account. If you select pe_collection, forward and reverse reads will be merged.">
+                <option value="se" selected="true">Single-end</option>
+                <option value="pe_collection">Paired-end (as collection)</option>
+            </param>
+            <when value="se">
+                <param format="fastqsanger,fastqsanger.gz" name="input_single" type="data" label="Single-end FASTQ reads" help="(-q)" />
+            </when>
+            <when value="pe_collection">
+                <param format="fastqsanger,fastqsanger.gz" name="input_paired" type="data_collection" collection_type="paired" label="Paired-end FASTQ reads as paired collection" help="(-q)"/>
+            </when>
+        </conditional>
         <conditional name="reference_genome">
             <param help="Built-in references were created using default options" label="Source for the reference genome to align against" name="reference_genome_source" type="select">
                 <!-- Write a datamanager if prebuilt genomes are important
@@ -71,6 +86,7 @@
                 <option value="history">Use a genome from history to build an index</option>
                 <option value="reference">Use a built-in genome to build an index</option>
             </param>
+            <!--
             <when value="indexed">
                 <param help="If your genome of interest is not listed, contact the Galaxy team" label="Select a reference genome" name="index" type="select">
                     <options from_data_table="yaha_indexes">
@@ -79,6 +95,7 @@
                     </options>
                 </param>
             </when>
+            -->
             <when value="history">
                 <param format="fasta" label="Select the reference genome" name="history_item" type="data" />
                 <expand macro="index_parameter"/>
