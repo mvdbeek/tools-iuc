@@ -1,0 +1,143 @@
+<tool id="damidseq_core" name="damidseq" version="0.1.1">
+    <description>align, extend and normalize a DamID-seq experiment</description>
+    <requirements>
+        <requirement type="package" version="1.4">damidseq_pipeline</requirement>
+    </requirements>
+    <version_command><![CDATA[damidseq_pipeline --help 2>&1| grep damidseq_pipeline]]></version_command>
+    <command detect_errors="aggressive"><![CDATA[
+        ln -f -s '$dam' A001.fastq &&
+        ln -f -s '$dam_fusion' A002.fastq &&
+        ln -f -s '$index' index.txt &&
+        HOME="\$PWD" damidseq_pipeline
+        --bins=$bins
+        --bowtie=1
+        --bowtie2_genome_dir='$reference_index.fields.path'
+        --extend_reads=$extend_reads
+        --extension_method='$extension_method'
+        $full_data_files
+        --gatc_frag_file='$gatc_frag_file'
+        --len=$len
+        --max_norm_value='$max_norm_value'
+        $method_subtract
+        --min_norm_value='$min_norm_value'
+        --norm_method=$norm_method
+        --norm_steps=$norm_steps
+        --output_format=$output_format
+        --q=$q
+        --qscore1max=$qscore1max
+        --qscore1min=$qscore1min
+        --qscore2max=$qscore2max
+        --threads=\${GALAXY_SLOTS:-4} 2>&1| LC_ALL=C sed -e 's/[^A-Za-z0-9._-]/ /g' &&
+        mv Fusion-vs-Dam.* fusion.output
+    ]]></command>
+    <configfiles>
+        <configfile name="index">A1	Dam
+A2	Fusion</configfile>
+    </configfiles>
+    <inputs>
+        <param argument="--dam" type="data" format="fastq,fastq.gz" label="Control Dam fastq"/>
+        <param name="dam_fusion" type="data" format="fastq,fastq.gz" label="DAM fusion fastq"/>
+        <param name="reference_index" type="select" label="Select reference genome" help="If your genome of interest is not listed, contact the Galaxy team">
+          <options from_data_table="bowtie2_indexes">
+            <filter type="sort_by" column="2"/>
+            <validator type="no_options" message="No indexes are available for the selected input dataset"/>
+          </options>
+        </param>
+        <param argument="--gatc_frag_file" type="data" format="gff" label="GFF file with all GATC locations"/>
+        <param name="output_format" type="select" label="Select the output format for the peaks">
+            <option value="bedgraph">Bed</option>
+            <option value="gff">GFF</option>
+        </param>
+        <param argument="--extend_reads" type="boolean" truevalue="1" falsevalue="0" checked="True" label="Perform read extension?"/>
+        <param argument="--extension_method" type="select" label="Select the read extension method" help="Select Full to extend all reads or GATC to extend reads to --len or to the next GATC site, whichever is shorter. Using this option increases peak resolution (default).">
+            <option value="gatc">To nearest GATC site</option>
+            <option value="full">Full</option>
+        </param>
+        <param argument="--full_data_files" type="boolean" truevalue="--full_data_file" falsevalue="" label="Output full binned ratio files (not only GATC array)"/>
+        <param argument="--len" type="integer" min="50" value="300" label="Length to extend reads to"/>
+        <param argument="--bins" type="integer" min="10" value="75" label="Width of bins to use for mapping reads"/>
+        <param argument="--min_norm_value" type="float" value="-5.0" label="Minimum log2 value to limit normalisation search at"/>
+        <param argument="--max_norm_value" type="float" value="5.0" label="Maximum log2 value to limit normalisation search at"/>
+        <param argument="--method_subtract" type="boolean" truevalue="--method_subtract" falsevalue="" label="Subtract DAM control values from DAM-fusion values instead of using the log2 ratio?"/>
+        <param argument="--norm_method" type="select" label="Select normalization method">
+            <option value="kde">kernel density estimation of log2 GATC fragment ratio (recommended)</option>
+            <option value="rpm">readcounts per million reads (not recommended for most use cases)</option>
+        </param>
+        <param argument="--norm_steps" type="integer" min="1" value="300" label="Number of points in normalisation routine"/>
+        <param argument="--q" type="integer" value="30" min="0" label="Cutoff average Q score for aligned reads"/>
+        <param argument="--qscore1min" type="float" min="0.0" value="0.4" max="1.0" label="min decile for normalising from Dam array"/>
+        <param argument="--qscore1max" type="float" min="0.0" value="1.0" max="1.0" label="max decile for normalising from Dam array"/>
+        <param argument="--qscore2max" type="float" min="0.0" value="1.0" max="1.0" label="max decile for normalising from fusion-protein array"/>
+    </inputs>
+    <outputs>
+        <data name="output_ratio" format="bed" from_work_dir="fusion.output" label="DAM-fusion vs Dam-only ratio">
+            <change_format>
+                <when input="output_format" value="gff" format="gff" />
+            </change_format>
+            <actions>
+                <action type="metadata" name="dbkey">
+                    <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
+                        <filter type="param_value" column="0" value="#" compare="startswith" keep="False"/>
+                        <filter type="param_value" ref="reference_index" column="0"/>
+                    </option>
+                </action>
+            </actions>
+        </data>
+        <data name="control_output" format="bam" from_work_dir="Dam-ext300.bam" label="DAM-only alignment">
+            <actions>
+                <action type="metadata" name="dbkey">
+                    <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
+                        <filter type="param_value" column="0" value="#" compare="startswith" keep="False"/>
+                        <filter type="param_value" ref="reference_index" column="0"/>
+                    </option>
+                </action>
+            </actions>
+        </data>
+        <data name="fusion_output" format="bam" from_work_dir="Fusion-ext300.bam" label="DAM-fusion alignment">
+            <actions>
+                <action type="metadata" name="dbkey">
+                    <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
+                        <filter type="param_value" column="0" value="#" compare="startswith" keep="False"/>
+                        <filter type="param_value" ref="reference_index" column="0"/>
+                    </option>
+                </action>
+            </actions>
+        </data>
+    </outputs>
+    <tests>
+        <test>
+            <param name="dam" value="A001.fastq"/>
+            <param name="dam_fusion" value="A002.fastq"/>
+            <param name="gatc_frag_file" value="dm6.GATC.gff"/>
+            <param name="reference_index" value="dm6"/>
+            <param name="norm_method" value="rpm"/>
+            <output name="output_ratio" file="output_ratio.bed"/>
+            <output name="control_output" file="control.bam"/>
+            <output name="fusion_output" file="fusion.bam"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+Processing DamID-seq data involves extending single-end reads, aligning
+the reads to the genome and determining the coverage, similar to
+processing regular ChIP-seq datasets. However, as DamID data is
+represented as a log2 ratio of (Dam-fusion/Dam), normalisation of the
+sample and Dam-only control is necessary and adding pseudocounts to
+mitigate the effect of background counts is highly recommended.
+
+damidseq_pipeline is a single script that automatically handles
+sequence alignment, read extension, binned counts, normalisation,
+pseudocount addition and final ratio file generation. The script uses
+FASTQ or BAM files as input, and outputs the final log2 ratio files in
+bedGraph (or optionally GFF) format.
+
+The output ratio files can easily be converted to TDF for viewing in IGV using
+igvtools. The files can be processed for peak calling using find_peaks or, if
+using RNA pol II DamID, transcribed genes can be determined using
+polii.gene.call.
+
+        ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btv386</citation>
+    </citations>
+</tool>
