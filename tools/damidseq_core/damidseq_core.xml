@@ -1,4 +1,4 @@
-<tool id="damidseq_core" name="damidseq" version="0.1.1">
+<tool id="damidseq_core" name="damidseq" version="0.1.2">
     <description>align, extend and normalize a DamID-seq experiment</description>
     <requirements>
         <requirement type="package" version="1.4">damidseq_pipeline</requirement>
@@ -67,7 +67,7 @@ A2	Fusion</configfile>
         <param argument="--q" type="integer" value="30" min="0" label="Cutoff average Q score for aligned reads"/>
         <param argument="--qscore1min" type="float" min="0.0" value="0.4" max="1.0" label="min decile for normalising from Dam array"/>
         <param argument="--qscore1max" type="float" min="0.0" value="1.0" max="1.0" label="max decile for normalising from Dam array"/>
-        <param argument="--qscore2max" type="float" min="0.0" value="1.0" max="1.0" label="max decile for normalising from fusion-protein array"/>
+        <param argument="--qscore2max" type="float" min="0.0" value="0.9" max="1.0" label="max decile for normalising from fusion-protein array"/>
     </inputs>
     <outputs>
         <data name="output_ratio" format="bed" from_work_dir="fusion.output" label="DAM-fusion vs Dam-only ratio">
