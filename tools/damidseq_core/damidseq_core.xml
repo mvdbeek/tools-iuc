@@ -1,4 +1,4 @@
-<tool id="damidseq_core" name="damidseq" version="0.1.2">
+<tool id="damidseq_core" name="damidseq" version="0.1.3">
     <description>align, extend and normalize a DamID-seq experiment</description>
     <requirements>
         <requirement type="package" version="1.4">damidseq_pipeline</requirement>
@@ -35,8 +35,8 @@
 A2	Fusion</configfile>
     </configfiles>
     <inputs>
+        <param name="dam_fusion" type="data" format="fastq,fastq.gz" label="Dam fusion fastq"/>
         <param argument="--dam" type="data" format="fastq,fastq.gz" label="Control Dam fastq"/>
-        <param name="dam_fusion" type="data" format="fastq,fastq.gz" label="DAM fusion fastq"/>
         <param name="reference_index" type="select" label="Select reference genome" help="If your genome of interest is not listed, contact the Galaxy team">
           <options from_data_table="bowtie2_indexes">
             <filter type="sort_by" column="2"/>
@@ -58,7 +58,7 @@ A2	Fusion</configfile>
         <param argument="--bins" type="integer" min="10" value="75" label="Width of bins to use for mapping reads"/>
         <param argument="--min_norm_value" type="float" value="-5.0" label="Minimum log2 value to limit normalisation search at"/>
         <param argument="--max_norm_value" type="float" value="5.0" label="Maximum log2 value to limit normalisation search at"/>
-        <param argument="--method_subtract" type="boolean" truevalue="--method_subtract" falsevalue="" label="Subtract DAM control values from DAM-fusion values instead of using the log2 ratio?"/>
+        <param argument="--method_subtract" type="boolean" truevalue="--method_subtract" falsevalue="" label="Subtract Dam control values from Dam-fusion values instead of using the log2 ratio?"/>
         <param argument="--norm_method" type="select" label="Select normalization method">
             <option value="kde">kernel density estimation of log2 GATC fragment ratio (recommended)</option>
             <option value="rpm">readcounts per million reads (not recommended for most use cases)</option>
@@ -70,7 +70,7 @@ A2	Fusion</configfile>
         <param argument="--qscore2max" type="float" min="0.0" value="0.9" max="1.0" label="max decile for normalising from fusion-protein array"/>
     </inputs>
     <outputs>
-        <data name="output_ratio" format="bed" from_work_dir="fusion.output" label="DAM-fusion vs Dam-only ratio">
+        <data name="output_ratio" format="bed" from_work_dir="fusion.output" label="Dam-fusion vs Dam-only ratio">
             <change_format>
                 <when input="output_format" value="gff" format="gff" />
             </change_format>
@@ -83,7 +83,7 @@ A2	Fusion</configfile>
                 </action>
             </actions>
         </data>
-        <data name="control_output" format="bam" from_work_dir="Dam-ext300.bam" label="DAM-only alignment">
+        <data name="control_output" format="bam" from_work_dir="Dam-ext300.bam" label="Dam-only alignment">
             <actions>
                 <action type="metadata" name="dbkey">
                     <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
@@ -93,7 +93,7 @@ A2	Fusion</configfile>
                 </action>
             </actions>
         </data>
-        <data name="fusion_output" format="bam" from_work_dir="Fusion-ext300.bam" label="DAM-fusion alignment">
+        <data name="fusion_output" format="bam" from_work_dir="Fusion-ext300.bam" label="Dam-fusion alignment">
             <actions>
                 <action type="metadata" name="dbkey">
                     <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
