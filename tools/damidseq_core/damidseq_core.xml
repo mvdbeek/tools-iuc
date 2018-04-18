@@ -5,8 +5,10 @@
     </requirements>
     <version_command><![CDATA[damidseq_pipeline --help 2>&1| grep damidseq_pipeline]]></version_command>
     <command detect_errors="aggressive"><![CDATA[
-        ln -f -s '$dam' A001.fastq &&
-        ln -f -s '$dam_fusion' A002.fastq &&
+        #set dam_file = 'A001.fastq.gz' if str($dam.ext).endswith('.gz') else 'A001.fastq'
+        #set dam_fusion_file = 'A002.fastq.gz' if str($dam_fusion.ext).endswith('.gz') else 'A002.fastq'
+        ln -f -s '$dam' $dam_file &&
+        ln -f -s '$dam_fusion' $dam_fusion_file &&
         ln -f -s '$index' index.txt &&
         HOME="\$PWD" damidseq_pipeline
         --bins=$bins
@@ -105,6 +107,16 @@ A2	Fusion</configfile>
         </data>
     </outputs>
     <tests>
+        <test>
+            <param name="dam" value="A001.fastq.gz"/>
+            <param name="dam_fusion" value="A002.fastq.gz"/>
+            <param name="gatc_frag_file" value="dm6.GATC.gff"/>
+            <param name="reference_index" value="dm6"/>
+            <param name="norm_method" value="rpm"/>
+            <output name="output_ratio" file="output_ratio.bed"/>
+            <output name="control_output" file="control.bam"/>
+            <output name="fusion_output" file="fusion.bam"/>
+        </test>
         <test>
             <param name="dam" value="A001.fastq"/>
             <param name="dam_fusion" value="A002.fastq"/>
