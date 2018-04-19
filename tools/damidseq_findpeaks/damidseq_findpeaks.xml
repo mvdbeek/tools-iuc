@@ -1,0 +1,68 @@
+<tool id="damidseq_find_peaks" name="damidseq find peaks" version="0.1.3">
+    <description>Simple FDR random permutation peak caller</description>
+    <requirements>
+        <requirement type="package" version="5.26">perl</requirement>
+    </requirements>
+    <version_command><![CDATA['$__tool_directory__/find_peaks' --help 2>&1| grep find_peaks]]></version_command>
+    <command detect_errors="aggressive"><![CDATA[
+perl '$__tool_directory__/find_peaks'
+ --fdr=$fdr
+ --frac=$fdr
+ --min_count=$min_count
+ --min_quant=$min_quant
+ --n=$n
+ --step=$step
+ --unified_peaks=$unified_peaks
+ '$input_file' && 
+mv peak_analysis*/*.gff peaks.gff &&
+mv peak_analysis*/*data log.txt
+    ]]></command>
+    <inputs>
+        <param name="input_file" type="data" format="gff,bed,bedgraph" label="Select dam-fusion/dam ratio files" help="You can use damidseq_core to produce this file."/>
+        <param argument="--fdr" type="float" min="0" max="1" value="0.01" label="Set the False Discovery Rate (FDR)"/>
+        <param argument="--frac" type="float" min="0" max="1" value="0.01" label="Number of random fragments to consider per iteration"/>
+        <param argument="--min_count" type="integer" min="1" value="2" label="Minimum number of fragments to consider as a peak"/>
+        <param argument="--min_quant" type="float" min="0" max="1" value="0.95" label="Minimum quantile for considering peaks"/>
+        <param argument="--n" type="integer" min="1" value="100" label="Number of iterations"/>
+        <param argument="--step" type="float" min="0" max="1" value="0.01" label="Stepping for quantiles"/>
+        <param argument="--unified_peaks" type="select" label="Set the False Discovery Rate (FDR)">
+            <option value="max">call maximum overlap as peak</option>
+            <option value="min">call minimum overlap as peak</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data name="peaks" format="gff3" from_work_dir="peaks.gff" label="${tool.name} on ${on_string}"/>
+        <data name="logs" format="txt" hidden="true" from_work_dir="log.txt" label="${tool.name} logs on ${on_string}"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="input_file" value="hp1.bed" ftype="bed"/>
+            <param name="min_count" value="1"/>
+            <param name="fdr" value="0.1"/>
+            <output name="peaks" value="peaks.gff"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+Options:
+ --fdr            False discovery rate value
+                    [Current value: 0.01]
+ --frac           Number of random fragments to consider per iteration
+ --min_count      Minimum number of fragments to consider as a peak
+                    [Current value: 2]
+ --min_quant      Minimum quantile for considering peaks
+                    [Current value: 0.95]
+ --n              Number of iterations
+                    [Current value: 100]
+ --step           Stepping for quantiles
+                    [Current value: 0.01]
+ --unified_peaks  Method for calling peak overlaps (two options):
+                    'min': call minimum overlapping peak area
+                    'max': call maximum overlap as peak
+                    [Current value: max]
+
+        ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btv386</citation>
+    </citations>
+</tool>
