@@ -3,7 +3,7 @@
     <requirements>
         <requirement type="package" version="5.26">perl</requirement>
     </requirements>
-    <version_command><![CDATA['$__tool_directory__/find_peaks' --help 2>&1| grep find_peaks]]></version_command>
+    <version_command><![CDATA[perl '$__tool_directory__/find_peaks' --help 2>&1| grep find_peaks]]></version_command>
     <command detect_errors="aggressive"><![CDATA[
 perl '$__tool_directory__/find_peaks'
  --fdr=$fdr
@@ -13,9 +13,9 @@ perl '$__tool_directory__/find_peaks'
  --n=$n
  --step=$step
  --unified_peaks=$unified_peaks
- '$input_file' && 
+'$input_file' 2>&1 | LC_ALL=C sed -e 's/[^A-Za-z0-9._-]/ /g' > log.txt &&
 mv peak_analysis*/*.gff peaks.gff &&
-mv peak_analysis*/*data log.txt
+cat peak_analysis*/*data >> log.txt
     ]]></command>
     <inputs>
         <param name="input_file" type="data" format="gff,bed,bedgraph" label="Select dam-fusion/dam ratio files" help="You can use damidseq_core to produce this file."/>
@@ -31,7 +31,7 @@ mv peak_analysis*/*data log.txt
         </param>
     </inputs>
     <outputs>
-        <data name="peaks" format="gff3" from_work_dir="peaks.gff" label="${tool.name} on ${on_string}"/>
+        <data name="peaks" format="gff3" from_work_dir="peaks.gff" label="${tool.name} GFF on ${on_string}"/>
         <data name="logs" format="txt" hidden="true" from_work_dir="log.txt" label="${tool.name} logs on ${on_string}"/>
     </outputs>
     <tests>
