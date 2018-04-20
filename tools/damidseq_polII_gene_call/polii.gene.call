@@ -1,0 +1,372 @@
+#!/usr/bin/env Rscript 
+
+# polii.gene.call.r
+# Copyright © 2014-15, Owen Marshall
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version. 
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details. 
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 
+# USA
+
+### FDR calcs ###
+# Method based on original perl scripts by Tony Southall (TDS) as published in
+# Southall et al. (2013). Dev Cell, 26(1), 101–12. doi:10.1016/j.devcel.2013.05.020
+#
+# Significant modifications to the original methodology include:
+# * taking a linear regression of log data rather than trial-and-error curve fitting of non-log data
+# * using a linear regression for the final intercept value rather than using the average intercept value for all conditions
+# -- both of these should increase the accuracy of the final FDR value.
+
+version <- "1.0.2"
+cat(paste("polii.gene.call v",version,"\n", sep=""))
+
+library(tools)
+
+### Read CLI options
+input.args <- commandArgs(trailingOnly = TRUE)
+
+in.files <- vector()
+read.ops <- function (x) {
+  for (op in x) {
+	if (any(grepl("^--",op))) {
+		op <- gsub("^--","",op)
+		y <- unlist(strsplit(op,"="))
+		
+		if (y[1] == "help") {
+		  cat(paste("Usage: Rscript polii.gene.call.r --genes.file=[some_genes_file.gff] [list of .gatc.bedgraph or .gatc.gff ratio files to process]\n\n", sep=""))
+		  
+		  cat("Options:\n")
+		  for (n in names(op.args)) {
+			cat(paste("  ",n,"=",op.args[[n]],"\n",sep=""))
+		  }
+		  cat("\n")
+		  quit("no",1)
+		}
+		
+		if (!is.null(op.args[[ y[1] ]])) {
+		  op.args[[ y[1] ]] <<- y[2]
+		} else {
+		  cat("Error: Option",y[1],"not recognised ...\n")
+		  quit("no",1)
+		}
+	} else {
+		in.files <<- c(in.files,op)
+	}
+  }
+}
+
+write.ops <- function () {
+  out.df <- data.frame()
+  for (n in names(op.args)) {
+	v <<- as.character(op.args[[n]])
+	df.line <- data.frame(
+	  option=n,
+	  value=v
+	)
+	out.df <- rbind(out.df, df.line)
+  }
+  write.table(out.df,"input.args.single.txt",row.names=F)
+}
+
+op.args <- list(
+  "genes.file" = "/mnt/data/Genomes/dmel_release/DmR6/DmR6.genes.gff",
+  "iter" = 50000,
+  "fdr" = 0.01
+)
+
+read.ops(input.args)
+
+if (length(in.files) == 0) {
+	cat("Usage: Rscript polii.gene.call.r [list of .gatc.gff ratio files to process]\n\n")
+	quit("no",1)
+}
+
+write.ops()
+
+### save random seed for future reproducibility
+dump.random <- runif(1)
+my.seed  <- .Random.seed
+write.table(my.seed,".randomseed")
+
+### read genes file
+cat("Reading genes data file ...\n")
+genes.file=op.args[["genes.file"]]
+genes <- read.table(genes.file, comment.char="#", sep="\t", quote="", fill=T)
+names(genes) <-  c('chr','source','type','start','end','score','strand','c','details')
+
+# only subset if there is a type termed "gene"
+if (any(genes$type == 'gene')) {
+  genes <- subset(genes, type=='gene')
+}
+
+genes$name <- sapply(genes$details, FUN = function (x) {regmatches(x,gregexpr("(?<=Name=).*?(?=;)", x, perl=T))} )
+genes <- genes[,c('chr','start','end','strand','name')]
+genes$chr <- gsub("^chr","",genes$chr,perl=T)
+
+if (nrow(genes) == 0) {
+	cat("Error: unable to extract gene information from genes file\n\n")
+	quit("no",1)
+}
+
+### functions
+read.gff <- function (x,name="score") {
+  fn.ext <- file_ext(x)
+  
+  if (grepl("gff",ignore.case=T,fn.ext)) {
+	temp.data <- read.table(x,row.names=NULL)
+	if (ncol(temp.data) > 5) {
+	  # GFF
+	  trim.data <- temp.data[,c(1,4,5,6)]
+	} else {
+		cat("Error: file does not appear to be in GFF format\n\n")
+		quit("no",1)
+	}
+  } else if (grepl("bed",ignore.case=T,fn.ext)) {
+	temp.data <- read.table(x,row.names=NULL,skip=1)
+	if (ncol(temp.data) == 4) {
+		# bedgraph
+		trim.data <- temp.data
+	} else {
+		cat("Error: file does not appear to be in bedGraph format\n\n")
+		quit("no",1)
+	}
+  } else {
+	cat("Error: input file does not appear to be in bedGraph or GFF format ...\n\n")
+	quit("no",1)
+  }
+  
+  names(trim.data) <- c("chr","start","end",name)
+  
+  trim.data$chr <- gsub("^chr","",trim.data$chr,perl=T)
+  
+  return(trim.data)
+}
+
+gene.exp <- function (input.df, buffer=0, iter=50000, debug=F) {
+  
+  avg.exp <- data.frame(input.df[1,c(4:(length(names(input.df))))])
+  avg <- vector(length=(length(names(input.df)) - 4))
+  avg.exp <- avg.exp[0,]
+  
+  ### FDR calcs ###
+  # Method based off perl scripts by Tony Southall (TDS) as published in
+  # Southall et al. (2013). Dev Cell, 26(1), 101–12. doi:10.1016/j.devcel.2013.05.020
+  #
+  # Significant modifications to the original methodology include:
+  # * taking a linear regression of log data rather than trial-and-error curve fitting of non-log data
+  # * using a linear regression for the final intercept value rather than using the average intercept value for all conditions
+  # -- both of these should increase the accuracy of the final FDR value.
+  
+  input.len <- length(input.df[,1])
+  frag.samp <- c(1,2,3,4,6,8,10,12,15)
+  thres.samp <- c(0.1,0.2,0.3,0.4,0.5,0.65,0.8,1.0,1.5,2.0)
+  
+  rand <- list()
+  
+  for (thres in thres.samp) {
+    
+    cat(paste("  Calculating FDR for threshold",thres,"\n",sep=" "))
+    
+    # init vars
+    for (f in frag.samp) {
+      # List names are, e.g. frag 1, thres 0.2: rand[[thres.1.0.2]]
+      rand[[paste("thres.",f,".",thres,sep="")]] <- 0;
+    }
+    
+    for (i in 1:iter) {
+      if (i %% 200 == 0) {cat(paste("  iter",i,"\r"))}
+      # get random sample for different fragment lengths
+      
+      rand.samp <- list()
+      
+      for (f in frag.samp) {
+        # Using the fourth column as we're only calculating FDR for one sample ...
+        rand.samp[[paste("rand.",f,sep="")]] <- mean(input.df[runif(f,1,input.len),4])
+      }
+      
+      # count number of times exp > thres
+      for (f in frag.samp) {
+        if (rand.samp[[paste("rand.",f,sep="")]] > thres) {rand[[paste("thres.",f,".",thres,sep="")]] <- rand[[paste("thres.",f,".",thres,sep="")]] + 1}
+      }
+    }
+  }
+  
+  rand.fdr <- list()
+  
+  for (thres in thres.samp) {
+    for (f in frag.samp) {
+      rand.fdr[[paste("thres.",f,".",thres,sep="")]] <- rand[[paste("thres.",f,".",thres,sep="")]]/iter
+    }
+  }
+  
+  cat("Fitting curves ...\n")
+  
+  # curve fit: fdr vs thresholds
+  var.thres <- list()
+  
+  for (thres in thres.samp) {
+    for (f in frag.samp) {
+      var.thres[[paste("frags.",f,sep="")]] <- append(var.thres[[paste("frags.",f,sep="")]], rand.fdr[[paste("thres.",f,".",thres,sep="")]])
+    }
+  }
+  
+  inf.log.lm <- function (v) {
+    non.inf <- log(v) != -Inf
+    ret <- lm(log(v)[non.inf] ~ thres.samp[non.inf])
+    return(ret)
+  }
+  
+  # The relationship is exponential, so we need log data for a linear regression
+  # (in R, linear regression is: y = lm$coefficients[[2]]x + lm$coefficients[[1]] ... )
+  var.lm <- list()
+  for (f in frag.samp) {
+    var.lm[[paste("frags.",f,sep="")]] <- inf.log.lm(var.thres[[paste("frags.",f,sep="")]])
+  }
+  
+  # ... and now we do a linear regression on the slopes and intercepts of our previous regressions
+  # (This is the clever bit, and it actually seems to work.  The correlation of slope to fragment size is linear ...
+  # By doing this on the slope and intercept, we can now predict the FDR for any number of fragments with any expression.)
+  slope <- vector()
+  for (f in frag.samp) {
+    slope <- append(slope, var.lm[[paste("frags.",f,sep="")]]$coefficients[[2]])
+  }
+  
+  # slope regression predicts the average slope
+  slope.lm <- lm(slope ~ frag.samp)
+  
+  # TDS used an average intercept value for the intercept, however ...
+  inter <- vector()
+  for (f in frag.samp) {
+    inter <- append(inter, var.lm[[paste("frags.",f,sep="")]]$coefficients[[1]])
+  }
+  
+  # ... there's actually quite a bit of variation of the intercept with real data,
+  # so we're going to do a lin regression on the intercept instead.
+  #
+  # (I'm not convinced it's a true linear relationship.  But it's close to linear,
+  # and will certainly perform better than taking the mean intercept ...)
+  #
+  # If you're interested, set the debug flag to TRUE and take a look at the plots generated below ...
+  inter.lm <- lm(inter ~ frag.samp)
+  
+  if (debug == T) {
+    # plots for debugging/checking
+    plot.debug <- function (y,x,l,name="Debug plot") {
+      plot(y ~ x)
+      abline(l)
+      
+      lsum <- summary(l)
+      r2 <- lsum$r.squared
+      
+      legend("topleft",legend=r2,bty='n')
+      title(name)
+      
+      dev.copy(png,paste(name,".png",sep=""));dev.off()
+    }
+    
+    plot.debug(slope,frag.samp,slope.lm,name="correlation of slope")
+    plot.debug(inter,frag.samp,inter.lm,name="correlation of intercepts")
+  }
+  
+  # ok, so putting that all together ...
+  fdr <- function (frags, expr) {
+    inter.test <- inter.lm$coefficients[[2]] * frags + inter.lm$coefficients[[1]]
+    slope.test <- slope.lm$coefficients[[2]] * frags + slope.lm$coefficients[[1]]
+    
+    fdr.out <- exp(slope.test * expr + inter.test)
+    return(fdr.out)
+  }
+  
+  ### Gene expression values ###  
+  cat("Calculating gene values ...\n")
+  
+  count <- 0
+  
+  # unroll chromosomes for speed:
+  for (chromo in unique(genes$chr)) {
+    input.chr <- subset(input.df, chr==chromo)
+    genes.chr <- subset(genes, chr==chromo)
+    for (i in 1:length(genes.chr$name)) {
+      # Roll through each gene
+      
+      # Note: the original script calculated expression values for a table of proteins,
+      # here we just limit ourselves to the FDR for the first column past "chr", "start" and "end"
+      # so if you're thinking of looking at chromatin, for example, put PolII as column 4 in your table!
+      
+      gene.start <- genes.chr[i,"start"] - buffer
+      gene.end <- genes.chr[i,"end"] + buffer
+      
+      gene.start <- ifelse(gene.start < 1, 1, gene.start)
+      
+      # Create data frames for all gatc fragments covering current gene
+      exp <- data.frame(input.chr[ (input.chr$start <= gene.end) 
+                                 & (input.chr$end >= gene.start) 
+                                ,] )
+      
+      gatc.num <- length(exp[,1])
+      
+      # skip if no gatc fragments cover gene :(
+      if (gatc.num == 0) {next}
+      
+      # trim to gene boundaries ...
+      exp$start[1] <- gene.start
+      exp$end[length(exp[,1])] <- gene.end
+      
+      # gene length covered by gatc fragments
+      len <- sum(exp$end-exp$start)
+      
+      # calculate weighted score for each column (representing different proteins)
+      for (j in 4:length(names(input.chr))) {
+        avg[j] <- (sum((exp$end-exp$start)*exp[j]))/len
+      }
+      
+      # make data.frame of averages (to be appended to avg.exp)
+      df <- cbind(avg[1])
+      for (k in 2:length(avg)) {
+        df <- cbind(df,avg[k])
+      }
+      df <- cbind(df,gatc.num)
+      
+      # only fdr for first column for now ...
+      gene.fdr <- fdr(gatc.num,avg[4])
+      df <- cbind(df, gene.fdr)
+      
+      # append current gene to list
+      avg.exp <- rbind(avg.exp,data.frame(name=as.character(genes.chr[i,"name"]), df))
+      count <- count+1
+      if (count %% 50 == 0) {cat(paste(count,"genes averaged ...\r"))}
+    }
+  }
+  
+  avg.exp <- avg.exp[,c(1,5:(length(names(avg.exp))))]
+  names(avg.exp) <- c("name",names(input.df)[c(4:(length(names(input.df))))],"gatc.num","FDR")
+  
+  return(avg.exp)
+}
+
+for (name in in.files) {
+	cat(paste("\nNow working on",name,"...\n"))
+	bname <- basename(name)
+	fname <- sub("\\..*","",bname,perl=T)
+	
+	polii <- read.gff(name,"polii")
+	
+	polii.exp <- gene.exp(polii, iter=as.numeric(op.args[["iter"]]))
+	
+	out <- subset(polii.exp,FDR < op.args[["fdr"]])
+	
+	write.table(polii.exp,paste(fname,"genes.details.csv",sep="."),row.names=F,col.names=T,quote=T,sep="\t")
+	write.table(out$name, paste(fname,"genes",sep="."),row.names=F,col.names=F,quote=F)
+}
+
+cat("\nAll done.\n\n")

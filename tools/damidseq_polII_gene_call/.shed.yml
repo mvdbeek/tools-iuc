@@ -1,0 +1,17 @@
+categories:
+- ChIP-seq
+description: Rscript for calculating average PolII occupancy and FDR for RNA Pol II DamID datasets
+long_description: |
+    Processing DamID-seq data involves extending single-end reads, aligning the
+    reads to the genome and determining the coverage, similar to processing
+    regular ChIP-seq datasets. However, as DamID data is represented as a log2
+    ratio of (Dam-fusion/Dam), normalisation of the sample and Dam-only control
+    is necessary and adding pseudocounts to mitigate the effect of background
+    counts is highly recommended.
+name: damidseq_polII_gene_call
+owner: mvdbeek
+homepage_url: https://github.com/owenjm/polii.gene.call
+remote_repository_url:
+    https://github.com/galaxyproject/tools-iuc/tree/master/tools/damidseq_polII_gene_call
+type:
+    unrestricted
