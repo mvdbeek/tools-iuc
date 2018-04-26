@@ -8,7 +8,7 @@ long_description: |
     ratio of (Dam-fusion/Dam), normalisation of the sample and Dam-only control
     is necessary and adding pseudocounts to mitigate the effect of background
     counts is highly recommended.
-name: damidseq_polII_gene_call
+name: damidseq_polii_gene_call
 owner: mvdbeek
 homepage_url: https://github.com/owenjm/polii.gene.call
 remote_repository_url:
