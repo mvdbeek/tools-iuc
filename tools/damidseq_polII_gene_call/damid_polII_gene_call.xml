@@ -1,7 +1,7 @@
 <tool id="damidseq_polII_gene_call" name="Calculate polII occupancy" version="1.0.2">
     <description>from DamIDseq data</description>
     <requirements>
-        <requirement type="package" version="3.4">R</requirement>
+        <requirement type="package" version="3.4">r-base</requirement>
     </requirements>
     <version_command><![CDATA[Rscript '$__tool_directory__/polii.gene.call' | grep -o "v.*"]]></version_command>
     <command detect_errors="aggressive"><![CDATA[
