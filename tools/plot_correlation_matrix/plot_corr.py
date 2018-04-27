@@ -1,7 +1,7 @@
 import os
 import click
 import matplotlib
-matplotlib.use('tkagg')
+matplotlib.use('agg')
 
 import pandas as pd  # noqa: E402
 import seaborn as sns   # noqa: E402
