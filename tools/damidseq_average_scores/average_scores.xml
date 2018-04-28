@@ -11,32 +11,37 @@ python '$average_script'
 import pandas as pd
 
 #set files = [str(f) for f in $input_files]
-#set column = 3 if $input_files[0].ext in ['bed', 'bedgraph'] else 5
+#set column = {'bed': 4, 'bedgraph': 3, 'gff': 5, 'gff3': 5, 'gtf': 5}[$input_files[0].ext]
+skiprows = 0
+with open('$files[0]') as first_file:
+    for i, line in enumerate(first_file):
+        if not line.startswith(('track', 'browser', '#')):
+            skiprows = i
+            break
 d = {}
 #for f in $files:
-d['$f'] = pd.read_csv('$f', usecols=[$column], sep="\t", skiprows=$skiprows, header=None, squeeze=True)
+d['$f'] = pd.read_csv('$f', usecols=[$column], sep="\t", skiprows=skiprows, header=None, squeeze=True)
 #end for
 df = pd.DataFrame.from_dict(d)
 mean = df.mean(axis=1)
 with open('$averaged_output', 'w') as out, open('$files[0]') as first_file:
     for i, line in enumerate(first_file):
         fields = line.strip().split("\t")
-        if i >= $skiprows:
-            fields[$column] = str(mean[i - $skiprows])
+        if i >= skiprows:
+            fields[$column] = str(mean[i - skiprows])
         out.write("%s\n" % "\t".join(fields))
     </configfile>
 </configfiles>
     <inputs>
         <param name="input_files" type="data" multiple="true" format="bed,bedgraph,gff" label="Select the files for which to average the score"/>
-        <param name="skiprows" type="integer" min="0" value="0" label="Skip the first N rows" help="To skip comments and track definition lines"/>
     </inputs>
     <outputs>
         <data name="averaged_output" format_source="input_files" label="${tool.name} on ${on_string}"/>
     </outputs>
     <tests>
         <test>
-            <param name="input_files" value="1.bed,2.bed" ftype="bed"/>
-            <output name="averaged_output" value="averaged.bed" ftype="bed"/>
+            <param name="input_files" value="1.bed,2.bed" ftype="bedgraph"/>
+            <output name="averaged_output" value="averaged.bed" ftype="bedgraph"/>
         </test>
     </tests>
     <help><![CDATA[
