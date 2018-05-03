@@ -1,4 +1,4 @@
-<tool id="damidseq_core" name="damidseq" version="0.1.4">
+<tool id="damidseq_core" name="damidseq" version="0.1.5">
     <description>align, extend and normalize a DamID-seq experiment</description>
     <requirements>
         <requirement type="package" version="1.4">damidseq_pipeline</requirement>
@@ -30,14 +30,17 @@
         --qscore1min=$qscore1min
         --qscore2max=$qscore2max
         --threads=\${GALAXY_SLOTS:-4} 2>&1| LC_ALL=C sed -e 's/[^A-Za-z0-9._-]/ /g' &&
-        mv Fusion-vs-Dam.gatc.* gatc.output
+        #set EXT = "-ext%s" % $len if $extend_reads == '1' else ""
+        mv 'Dam-${dam.element_identifier}${EXT}.bam' '$control_output' &&
+        mv '${dam_fusion.element_identifier}${EXT}.bam' '$fusion_output' &&
+        mv '${dam_fusion.element_identifier}-vs-Dam.gatc.$output_format' gatc.output
         #if str($full_data_files):
-            && mv Fusion-vs-Dam.* full.output
+            && mv '${dam_fusion.element_identifier}-vs-Dam.$output_format' full.output
         #end if
     ]]></command>
     <configfiles>
-        <configfile name="index">A1	Dam
-A2	Fusion</configfile>
+        <configfile name="index">A1	Dam-$dam.element_identifier
+A2	$dam_fusion.element_identifier</configfile>
     </configfiles>
     <inputs>
         <param name="dam_fusion" type="data" format="fastq,fastq.gz" label="Dam fusion fastq"/>
@@ -75,7 +78,7 @@ A2	Fusion</configfile>
         <param argument="--qscore2max" type="float" min="0.0" value="0.9" max="1.0" label="max decile for normalising from fusion-protein array"/>
     </inputs>
     <outputs>
-        <data name="output_ratio" format="bedgraph" from_work_dir="gatc.output" label="Dam-fusion vs Dam-only GATC ratio on ${on_string}">
+        <data name="output_ratio" format="bedgraph" from_work_dir="gatc.output" label="Dam-fusion vs Dam-only GATC ratio on ${on_string}" default_identifier_source="dam_fusion">
             <change_format>
                 <when input="output_format" value="gff" format="gff" />
             </change_format>
@@ -88,7 +91,7 @@ A2	Fusion</configfile>
                 </action>
             </actions>
         </data>
-        <data name="output_ratio_full" format="bedgraph" from_work_dir="full.output" label="Dam-fusion vs Dam-only full ratio on ${on_string}">
+        <data name="output_ratio_full" format="bedgraph" from_work_dir="full.output" label="Dam-fusion vs Dam-only full ratio on ${on_string}" default_identifier_source="dam_fusion">
             <filter>full_data_files</filter>
             <change_format>
                 <when input="output_format" value="gff" format="gff" />
@@ -102,7 +105,7 @@ A2	Fusion</configfile>
                 </action>
             </actions>
         </data>
-        <data name="control_output" format="bam" from_work_dir="Dam-ext300.bam" label="Dam-only alignment on ${on_string}">
+        <data name="control_output" format="bam" label="Dam-only alignment on ${on_string}" default_identifier_source="dam_fusion">
             <actions>
                 <action type="metadata" name="dbkey">
                     <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
@@ -112,7 +115,7 @@ A2	Fusion</configfile>
                 </action>
             </actions>
         </data>
-        <data name="fusion_output" format="bam" from_work_dir="Fusion-ext300.bam" label="Dam-fusion alignment on ${on_string}">
+        <data name="fusion_output" format="bam" label="Dam-fusion alignment on ${on_string}" default_identifier_source="dam_fusion">
             <actions>
                 <action type="metadata" name="dbkey">
                     <option type="from_data_table" name="bowtie2_indexes" column="1" offset="0">
@@ -135,6 +138,7 @@ A2	Fusion</configfile>
             <output name="fusion_output" file="fusion.bam"/>
         </test>
         <test>
+            <!-- test full data output -->
             <param name="dam" value="A001.fastq"/>
             <param name="dam_fusion" value="A002.fastq"/>
             <param name="gatc_frag_file" value="dm6.GATC.gff"/>
@@ -145,6 +149,21 @@ A2	Fusion</configfile>
             <output name="output_ratio_full" file="output_ratio_full.bed"/>
             <output name="control_output" file="control.bam"/>
             <output name="fusion_output" file="fusion.bam"/>
+        </test>
+        <test>
+            <!-- test no extension and gff outpt -->
+            <param name="dam" value="A001.fastq"/>
+            <param name="dam_fusion" value="A002.fastq"/>
+            <param name="gatc_frag_file" value="dm6.GATC.gff"/>
+            <param name="reference_index" value="dm6"/>
+            <param name="norm_method" value="rpm"/>
+            <param name="full_data_files" value="true"/>
+            <param name="extend_reads" value="false"/>
+            <param name="output_format" value="gff"/>
+            <output name="output_ratio" file="output_ratio2.gff"/>
+            <output name="output_ratio_full" file="output_ratio_full2.gff"/>
+            <output name="control_output" file="control2.bam"/>
+            <output name="fusion_output" file="fusion2.bam"/>
         </test>
     </tests>
     <help><![CDATA[

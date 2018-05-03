@@ -1,4 +1,4 @@
-track type=bedGraph name="Fusion-vs-Dam" description="Fusion DamIDseq"
+track type=bedGraph name="A002.fastq-vs-Dam" description="A002.fastq DamIDseq"
 X	0	74	0
 X	75	149	0
 X	150	224	0
