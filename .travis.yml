@@ -72,8 +72,8 @@ jobs:
           fi
 
 before_install:
-  - export GALAXY_REPO=https://github.com/galaxyproject/galaxy
-  - export GALAXY_RELEASE=release_18.05
+  - export GALAXY_REPO=https://github.com/mvdbeek/galaxy
+  - export GALAXY_RELEASE=sleep_more
   - export PLANEMO_CONDA_PREFIX="$HOME/conda"
   - unset JAVA_HOME
 
