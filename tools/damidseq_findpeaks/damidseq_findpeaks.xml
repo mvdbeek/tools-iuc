@@ -7,7 +7,7 @@
     <command detect_errors="aggressive"><![CDATA[
 perl '$__tool_directory__/find_peaks'
  --fdr=$fdr
- --frac=$fdr
+ --frac=$frac
  --min_count=$min_count
  --min_quant=$min_quant
  --n=$n
@@ -20,7 +20,7 @@ cat peak_analysis*/*data >> log.txt
     <inputs>
         <param name="input_file" type="data" format="gff,bed,bedgraph" label="Select dam-fusion/dam ratio files" help="You can use damidseq_core to produce this file."/>
         <param argument="--fdr" type="float" min="0" max="1" value="0.01" label="Set the False Discovery Rate (FDR)"/>
-        <param argument="--frac" type="float" min="0" max="1" value="0.01" label="Number of random fragments to consider per iteration"/>
+        <param argument="--frac" type="integer" min="0" value="0" label="Number of random fragments to consider per iteration"/>
         <param argument="--min_count" type="integer" min="1" value="2" label="Minimum number of fragments to consider as a peak"/>
         <param argument="--min_quant" type="float" min="0" max="1" value="0.95" label="Minimum quantile for considering peaks"/>
         <param argument="--n" type="integer" min="1" value="100" label="Number of iterations"/>
