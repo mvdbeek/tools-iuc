@@ -59,14 +59,17 @@ $header
 #import json
 #set sample_table = []
 #for $level in $rep_factorLevel:
-    #for $file in $level.countsFile:
-        #silent $sample_table.append({"path": str($file), "label": str($file.element_identifier), "condition": str($level.factorLevel)})
+    #for $group in $level.groups.value:
+        #for $file in $countsFile.get_datasets_for_group($group):
+            #silent $sample_table.append({"path": str($file), "label": str($file.element_identifier), "condition": str($group)})
+        #end for
     #end for
 #end for
 #echo json.dumps($sample_table)
         </configfile>
     </configfiles>
     <inputs>
+        <param name="countsFile" type="data" format="tabular" multiple="true" label="Counts file(s)"/>
         <repeat name="rep_factorLevel" title="Factor level" min="2" default="2">
             <param name="factorLevel" type="text" value="FactorLevel" label="Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"
                 help="Only letters, numbers and underscores will be retained in this field">
@@ -74,7 +77,7 @@ $header
                     <valid initial="string.letters,string.digits"><add value="_" /></valid>
                 </sanitizer>
             </param>
-            <param name="countsFile" type="data" format="tabular" multiple="true" label="Counts file(s)"/>
+            <param name="groups" type="group_tag" data_ref="countsFile" multiple="true" label="Select groups that correspond to this factor level"/>
         </repeat>
         <param name="min_k" type="integer" value="1" min="1" label="Try to find at least this many factors of unwanted variation" />
         <param name="max_k" type="integer" value="1" min="1" label="Try to find at most this many factors of unwanted variation" />
