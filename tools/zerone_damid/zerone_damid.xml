@@ -1,0 +1,41 @@
+<tool id="zerone_damid" name="Discretize DamID experiments with Zerone" version="1.0">
+    <requirements>
+        <requirement type="package" version="1.0">r-zerone</requirement>
+        <requirement type="package" version="2.9.3">rpy2</requirement>
+        <requirement type="package" version="0.23">pandas</requirement>
+        <requirement type="package" version="6.7">click</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/r-zerone.py'
+#for c in $control_files:
+--control_files '$c'
+#end for
+#for d in $fusion_files:
+--fusion_files '$d'
+#end for
+--output '$output'
+    ]]></command>
+    <inputs>
+        <param argument="--control_files" type="data" format="bed" multiple="true" label="BED file(s) containing GATC counts for DamID control" help="You can produce these files uing bedtools coverageBed"/>
+        <param argument="--fusion_files" type="data" format="bed" multiple="true" label="BED file(s) containing GATC counts for DamID fusion" help="You can produce these files uing bedtools coverageBed"/>
+    </inputs>
+    <outputs>
+        <data name="output" label="Discretized DamID profile for ${on_string}" format="bed"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="control_files" value="c1.bed,c2.bed" ftype="bed"/>
+            <param name="damid_files" value="d1.bed,d2.bed" ftype="bed"/>
+            <output name="output" value="discrete.bed" ftype="bed"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+Zerone discretizes several ChIP-seq replicates simultaneously and resolves conflicts between them. After the job is done, Zerone checks the results and tells you whether it passes the quality control.
+
+This wrapper uses the zerone R package to discretize quantified GATC counts.
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btw336</citation>
+    </citations>
+</tool>

@@ -1,0 +1,10 @@
+categories:
+- ChIP-seq
+description: Discretize DamID experiments with Zerone
+homepage_url: https://github.com/nanakiksc/zerone
+long_description: |
+  Discretize DamID experiments with Zerone
+name: zerone_damid
+owner: mvdbeek
+remote_repository_url: https://github.com/galaxyproject/mvdbeek/tree/master/tools/zerone
+type: unrestricted
