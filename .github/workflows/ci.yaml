@@ -13,19 +13,22 @@ jobs:
       matrix:
         python-version: [3.7]
     steps:
-    - uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-        architecture: 'x64' # (x64 or x86)
-    - name: setup planemo
-      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
     - name: Cache .planemo/venv
       uses: actions/cache@v1
       id: cache-planemo-venv
       with:
         path: ~/.planemo/gx_venv_${{ matrix.python-version }}_${{ env.GALAXY_RELEASE }}
         key: gx_venv_${{ matrix.python-version }}_${{ env.GALAXY_RELEASE }}
+    - uses: actions/setup-python@v1
+      if: steps.cache-planemo-venv.outputs.cache-hit != 'true'
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: 'x64' # (x64 or x86)
+    - name: setup planemo
+      if: steps.cache-planemo-venv.outputs.cache-hit != 'true'
+      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
     - name: fake a planemo run to update cache
+      if: steps.cache-planemo-venv.outputs.cache-hit != 'true'
       run: 'touch tool.xml database.sqlite && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --galaxy_database_seed database.sqlite --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE --galaxy_source https://github.com/mvdbeek/galaxy'
   test:
     name: Lint & test tools
@@ -48,7 +51,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         architecture: 'x64' # (x64 or x86)
     - name: setup planemo
-      run: 'git clone -b merge_and_lint --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
     - name: planemo ci_find_tools
       run: 'planemo ci_find_repos --chunk_count 40 --chunk ${{ matrix.chunk  }} --exclude test_repositories --exclude packages --exclude deprecated --exclude_from .tt_skip --exclude_from .tt_biocontainer_skip --output tool.list'
     - name: set tool list
@@ -221,7 +224,7 @@ jobs:
           python-version: '3.7'
           architecture: 'x64'
       - name: setup planemo
-        run: 'git clone -b --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+        run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
       - name: combine outputs
         run: |
           find . -name tool_test_output.json -exec sh -c 'planemo merge_test_reports "$@" tool_test_output.json' sh {} +
