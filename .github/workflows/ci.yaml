@@ -63,7 +63,7 @@ jobs:
         path: ~/.cache/pip
         key: pip_cache_${{ matrix.python-version }}_${{ env.GALAXY_RELEASE }}
     - name: setup planemo
-      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
+      run: 'git clone --recursive --depth 1 https://github.com/mvdbeek/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
     - name: planemo ci_find_tools
       run: 'planemo ci_find_repos --chunk_count 40 --chunk ${{ matrix.chunk  }} --exclude test_repositories --exclude packages --exclude deprecated --exclude_from .tt_skip --exclude_from .tt_biocontainer_skip --output tool.list'
     - name: set tool list
