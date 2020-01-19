@@ -226,7 +226,7 @@ jobs:
           python-version: '3.7'
           architecture: 'x64'
       - name: setup planemo
-        run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+        run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
       - name: combine outputs
         run: |
           find . -name tool_test_output.json -exec sh -c 'planemo merge_test_reports "$@" tool_test_output.json' sh {} +
