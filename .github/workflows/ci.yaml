@@ -62,10 +62,6 @@ jobs:
       run: echo "::set-output name=tool_list::$(tr '\n' ' ' < tool.list)"
     - name: show repo list
       run: 'cat tool.list'
-    - name: planemo lint
-      run: 'planemo lint --recursive --report_level warn --fail_level error ${{ steps.tools.outputs.tool_list }}'
-    - name: planemo lint biocontainers
-      run: 'planemo lint --recursive --biocontainers --skip output,inputs,help,general,command,citations,tool_xsd --report_level warn --fail_level error ${{ steps.tools.outputs.tool_list }}'
     - name: planemo test tools biocontainers
       run: |
            touch database.sqlite
