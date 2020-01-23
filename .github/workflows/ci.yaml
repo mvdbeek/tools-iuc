@@ -4,7 +4,7 @@ on:
     branches:
       - gh_actions  # only run on gh_actions branch for now
 env:
-  GALAXY_RELEASE: release_20.01
+  GALAXY_RELEASE: gh_actions
 jobs:
   setup:
     name: Cache planemo setup
