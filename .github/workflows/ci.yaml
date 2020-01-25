@@ -20,7 +20,7 @@ jobs:
     - name: setup planemo
       run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
     - name: fake a planemo run to update cache
-      run: 'touch tool.xml database.sqlite && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --galaxy_database_seed database.sqlite --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE --galaxy_source https://github.com/mvdbeek/galaxy'
+      run: 'touch tool.xml database.sqlite && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE --galaxy_source https://github.com/mvdbeek/galaxy'
     - name: Cache .cache/pip
       uses: actions/cache@v1
       id: cache-pip
@@ -73,7 +73,6 @@ jobs:
       run: 'cat tool.list'
     - name: planemo test tools biocontainers
       run: |
-           touch database.sqlite
            while read -r DIR; do
                if [[ "$DIR" =~ ^data_managers.* ]]; then
                    TESTPATH=$(planemo ci_find_tools "$DIR")
