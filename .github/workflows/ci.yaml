@@ -24,7 +24,7 @@ jobs:
         path: ~/.cache/pip
         key: pip-cache-${{ matrix.python-version }}-${{ env.GALAXY_RELEASE }}
     - name: setup planemo
-      run: 'git clone -b nsoranzo-patch-1 --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
     - uses: actions/checkout@v1
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v1
@@ -66,7 +66,7 @@ jobs:
         path: ~/.cache/pip
         key: pip_cache-${{ matrix.python-version }}-${{ env.GALAXY_RELEASE }}
     - name: setup planemo
-      run: 'git clone -b nsoranzo-patch-1 --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
     - name: planemo ci_find_tools
       run: 'planemo ci_find_repos --chunk_count 40 --chunk ${{ matrix.chunk  }} --exclude test_repositories --exclude packages --exclude deprecated --exclude_from .tt_skip --exclude_from .tt_biocontainer_skip --output tool.list'
     - name: set tool list
@@ -228,7 +228,7 @@ jobs:
           python-version: '3.7'
           architecture: 'x64'
       - name: setup planemo
-        run: 'git clone nsoranzo-patch-1 --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+        run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
       - name: combine outputs
         run: |
           find . -name tool_test_output.json -exec sh -c 'planemo merge_test_reports "$@" tool_test_output.json' sh {} +
