@@ -17,16 +17,19 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         architecture: 'x64' # (x64 or x86)
-    - name: setup planemo
-      run: 'git clone -b nsoranzo-patch-1 --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
-    - name: fake a planemo run to update cache
-      run: 'touch tool.xml && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE'
     - name: Cache .cache/pip
       uses: actions/cache@v1
       id: cache-pip
       with:
         path: ~/.cache/pip
         key: pip-cache-${{ matrix.python-version }}-${{ env.GALAXY_RELEASE }}
+    - name: setup planemo
+      run: 'git clone -b nsoranzo-patch-1 --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install planemo/ && rm -rf planemo'
+    - uses: actions/checkout@v1
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v1
+    - name: fake a planemo run to update cache
+      run: 'touch tool.xml && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE'
   test:
     name: Lint & test tools
     # This job runs on Linux
