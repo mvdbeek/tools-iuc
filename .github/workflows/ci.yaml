@@ -19,6 +19,8 @@ jobs:
         architecture: 'x64' # (x64 or x86)
     - name: setup planemo
       run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v1
     - name: fake a planemo run to update cache
       run: 'touch tool.xml && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE'
     - name: Cache .cache/pip
