@@ -26,7 +26,7 @@ jobs:
       id: cache-pip
       with:
         path: ~/.cache/pip
-        key: pip_cache_${{ matrix.python-version }}_${{ env.GALAXY_RELEASE }}
+        key: pip-cache-${{ matrix.python-version }}-${{ env.GALAXY_RELEASE }}
   test:
     name: Lint & test tools
     # This job runs on Linux
@@ -61,7 +61,7 @@ jobs:
       id: cache-pip
       with:
         path: ~/.cache/pip
-        key: pip_cache_${{ matrix.python-version }}_${{ env.GALAXY_RELEASE }}
+        key: pip_cache-${{ matrix.python-version }}-${{ env.GALAXY_RELEASE }}
     - name: setup planemo
       run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
     - name: planemo ci_find_tools
