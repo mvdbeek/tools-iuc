@@ -4,7 +4,7 @@ on:
     branches:
       - gh_actions  # only run on gh_actions branch for now
 env:
-  GALAXY_RELEASE: release_20.01
+  GALAXY_RELEASE: gh_actions
 jobs:
   setup:
     name: Cache planemo setup
@@ -20,7 +20,7 @@ jobs:
     - name: setup planemo
       run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
     - name: fake a planemo run to update cache
-      run: 'touch tool.xml && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE'
+      run: 'touch tool.xml database.sqlite && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE --galaxy_source https://github.com/mvdbeek/galaxy'
     - name: Cache .cache/pip
       uses: actions/cache@v1
       id: cache-pip
@@ -63,7 +63,7 @@ jobs:
         path: ~/.cache/pip
         key: pip_cache_${{ matrix.python-version }}_${{ env.GALAXY_RELEASE }}
     - name: setup planemo
-      run: 'git clone --recursive --depth 1 https://github.com/galaxyproject/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
+      run: 'git clone --recursive --depth 1 https://github.com/mvdbeek/planemo && python -m pip install --pre planemo/ && rm -rf planemo'
     - name: planemo ci_find_tools
       run: 'planemo ci_find_repos --chunk_count 40 --chunk ${{ matrix.chunk  }} --exclude test_repositories --exclude packages --exclude deprecated --exclude_from .tt_skip --exclude_from .tt_biocontainer_skip --output tool.list'
     - name: set tool list
@@ -79,7 +79,7 @@ jobs:
                else
                    TESTPATH="$DIR"
                fi
-               PIP_QUIET=1 planemo test --database_connection postgresql://postgres:postgres@localhost:5432/galaxy --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE --biocontainers --galaxy_python_version ${{ matrix.python-version }} --test_output_json "$DIR"/tool_test_output.json "$TESTPATH" || true
+               PIP_QUIET=1 planemo test --database_connection postgresql://postgres:postgres@localhost:5432/galaxy --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE --galaxy_source https://github.com/mvdbeek/galaxy --biocontainers --galaxy_python_version ${{ matrix.python-version }} --test_output_json "$DIR"/tool_test_output.json "$TESTPATH" || true
                docker system prune --all --force --volumes || true
            done < tool.list
     - name: Merge tool_test_output.json files
