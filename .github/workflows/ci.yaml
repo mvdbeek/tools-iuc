@@ -25,9 +25,8 @@ jobs:
         key: pip-cache-${{ matrix.python-version }}-${{ env.GALAXY_RELEASE }}
     - name: setup planemo
       run: 'python -m pip install planemo'
-    - uses: actions/checkout@v1
     - name: fake a planemo run to update cache
-      run: 'touch tool.xml && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE'
+      run: 'touch tool.xml && PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_branch $GALAXY_RELEASE .'
   test:
     name: Lint & test tools
     # This job runs on Linux
