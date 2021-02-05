@@ -1,4 +1,4 @@
-<tool id="purge_dups" name="Purge haplotigs" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
+<tool id="purge_dups" name="Purge haplotigs" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="19.01">
     <description>and overlaps in an assembly based on read depth</description>
     <macros>
         <token name="@TOOL_VERSION@">1.2.5</token>
