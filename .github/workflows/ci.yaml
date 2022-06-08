@@ -95,6 +95,10 @@ jobs:
         ports:
           - 5432:5432
     steps:
+    - name: Prune unused docker image, volumes and containers
+      run: docker system prune -a -f
+    - name: Clean dotnet folder for space
+      run: rm -Rf /usr/share/dotnet
     # checkout the repository
     # and use it as the current working directory
     - uses: actions/checkout@v2
