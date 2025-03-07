@@ -292,6 +292,7 @@ jobs:
         chunk: ${{ matrix.chunk }}
         chunk-count: ${{ needs.setup.outputs.chunk-count }}
         galaxy-slots: ${{ steps.cpu-cores.outputs.count }}
+        planemo-version: "https://github.com/mvdbeek/planemo/archive/refs/heads/fetch_data_tool_util.zip"
         # Limit each test to 15 minutes
         test_timeout: 1800
     - uses: actions/upload-artifact@v4
