@@ -11,7 +11,7 @@
     <command detect_errors="exit_code"><![CDATA[
     mkdir -p './complete_reports/' &&
     mkdir -p './fasta_files/' &&
-    #import os, re, glob
+    #import re
     #for $i in $transcripts        
         ln -s '$i' '${re.sub('[^\w.]', '_', i.element_identifier)}' &&
     #end for
