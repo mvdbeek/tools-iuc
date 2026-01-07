@@ -1,0 +1,120 @@
+<tool id="ngsderive_strandedness" name="ngsderive strandedness" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
+    <description>infers strandedness from RNA-seq BAM files</description>
+    <macros>
+        <token name="@TOOL_VERSION@">4.0.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">ngsderive</requirement>
+    </requirements>
+    <version_command>ngsderive --version</version_command>
+    <command detect_errors="exit_code"><![CDATA[
+## Link BAM file and index
+ln -s '${bam_input}' input.bam &&
+ln -s '${bam_input.metadata.bam_index}' input.bam.bai &&
+
+## Handle GTF/GFF file - ngsderive requires sorted and tabixed GTF/GFF
+## ngsderive will create the tabixed version if needed, but we link to the input
+ln -s '${gtf_input}' annotation.gtf &&
+
+ngsderive strandedness
+    input.bam
+    -g annotation.gtf
+    -n $n_genes
+    -m $min_reads_per_gene
+    -q $mapq
+    $split_by_rg
+    > '${output}'
+    ]]></command>
+    <inputs>
+        <param name="bam_input" type="data" format="bam" label="Input BAM file"
+               help="Aligned paired-end RNA-seq reads in BAM format. The file must be indexed."/>
+        <param name="gtf_input" type="data" format="gtf,gff,gff3" label="Gene annotation file (GTF/GFF)"
+               help="Gene model in GTF or GFF format. The file will be automatically sorted and indexed if necessary."/>
+        <param argument="-n" name="n_genes" type="integer" value="1000" min="1" label="Number of genes to sample"
+               help="Number of random genes to sample for strandedness inference."/>
+        <param argument="-m" name="min_reads_per_gene" type="integer" value="10" min="1" label="Minimum reads per gene"
+               help="Minimum number of reads per gene required for inclusion in the analysis."/>
+        <param argument="-q" name="mapq" type="integer" value="30" min="0" label="Minimum mapping quality (MAPQ)"
+               help="Minimum MAPQ score for a read to be considered."/>
+        <param argument="--split-by-rg" type="boolean" truevalue="--split-by-rg" falsevalue="" checked="false"
+               label="Split results by read group"
+               help="Output one entry per read group in addition to an overall entry."/>
+    </inputs>
+    <outputs>
+        <data name="output" format="tabular" label="${tool.name} on ${on_string}">
+            <actions>
+                <action name="column_names" type="metadata" default="File,TotalReads,ForwardPct,ReversePct,Predicted"/>
+            </actions>
+        </data>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="1">
+            <param name="bam_input" value="test_input.bam"/>
+            <param name="gtf_input" value="test_annotation.gtf"/>
+            <param name="n_genes" value="100"/>
+            <param name="min_reads_per_gene" value="5"/>
+            <param name="mapq" value="20"/>
+            <output name="output">
+                <assert_contents>
+                    <has_n_columns n="5"/>
+                    <has_text text="Predicted"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+**What it does**
+
+ngsderive strandedness infers the strandedness protocol used to generate RNA-seq data by
+analyzing read alignments against a gene model. It can determine whether your data was
+generated using a Stranded-Forward, Stranded-Reverse, or Unstranded protocol.
+
+This tool is useful when you have RNA-seq data but are unsure about the library preparation
+protocol used. Knowing the correct strandedness is essential for accurate gene expression
+quantification.
+
+**How it works**
+
+The tool randomly samples genes from the provided gene model and examines how reads align
+to those genes. Based on the proportion of reads mapping in the forward vs reverse orientation,
+it classifies the library as:
+
+- **Unstranded**: ~40-60% forward reads
+- **Stranded-Forward**: ≥80% forward reads
+- **Stranded-Reverse**: ≥80% reverse reads
+- **Inconclusive**: Results don't clearly indicate a strandedness type
+
+**Inputs**
+
+- **BAM file**: Paired-end RNA-seq alignments in BAM format (must be indexed)
+- **Gene annotation**: GTF or GFF file with gene models
+
+**Output**
+
+A tabular file with the following columns:
+
+- **File**: Name of the input BAM file
+- **TotalReads**: Number of reads used in the analysis
+- **ForwardPct**: Percentage of reads supporting forward strandedness
+- **ReversePct**: Percentage of reads supporting reverse strandedness
+- **Predicted**: The inferred strandedness (Stranded-Forward, Stranded-Reverse, Unstranded, or Inconclusive)
+
+**Notes**
+
+- Only paired-end reads are currently supported
+- For best results, ensure your BAM file has sufficient read depth
+
+For more information, see the `ngsderive documentation <https://stjudecloud.github.io/ngsderive/subcommands/strandedness/>`_.
+    ]]></help>
+    <citations>
+        <citation type="bibtex">
+@software{ngsderive,
+    author = {{St. Jude Cloud Team}},
+    title = {ngsderive: Forensic analysis tool for NGS data},
+    url = {https://github.com/stjudecloud/ngsderive},
+    year = {2020}
+}
+        </citation>
+    </citations>
+</tool>
