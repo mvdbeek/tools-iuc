@@ -57,8 +57,10 @@ echo 'merge.files(
     </outputs>
     <tests>
         <test>
-            <param name="type" value="fasta"/>
-            <param name="inputs" value="sample1.fa,sample2.fa,sample3.fa" ftype="fasta"/>
+            <conditional name="merge">
+                <param name="type" value="fasta"/>
+                <param name="inputs" value="sample1.fa,sample2.fa,sample3.fa" ftype="fasta"/>
+            </conditional>
             <output name="output" file="output.fa" ftype="fasta"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>

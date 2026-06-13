@@ -79,6 +79,19 @@ echo 'seq.error(
         <param name="count" type="data" format="mothur.count_table" optional="true" label="count table"/>
         <param name="threshold" type="float" value="" min="0" max="1" optional="true" label="threshold - error rate at which to report (default 1.)"/>
         <param name="ignorechimeras" type="boolean" truevalue="true" falsevalue="false" checked="true" label="ignorechimeras - "/>
+        <param name="output_sel" type="select" multiple="true" label="select outputs" help="">
+            <option value="summary" selected="true">summary</option>
+            <option value="seq">seq</option>
+            <option value="seq_forward">seq_forward</option>
+            <option value="seq_reverse">seq_reverse</option>
+            <option value="chimera">chimera</option>
+            <option value="count">count</option>
+            <option value="matrix">matrix</option>
+            <option value="ref_query">ref_query</option>
+            <option value="quality">quality</option>
+            <option value="qual_forward">qual_forward</option>
+            <option value="qual_reverse">qual_reverse</option>
+        </param>
         <expand macro="param-savelog"/>
     </inputs>
     <outputs>
@@ -120,8 +133,10 @@ echo 'seq.error(
     <tests>
         <test><!--test with all outputs and no qual file-->
             <param name="fasta_in" value="amazon.align_head" ftype="mothur.align"/>
-            <param name="template" value="HMP_MOCK.v35.align" ftype="mothur.align"/>
-            <param name="source" value="history"/>
+            <conditional name="alignment">
+                <param name="source" value="history"/>
+                <param name="template" value="HMP_MOCK.v35.align" ftype="mothur.align"/>
+            </conditional>
             <param name="output_sel" value="summary,seq,seq_forward,seq_reverse,chimera,count,matrix,ref_query"/>
             <output name="chimera_out" md5="9faf0da7d724a1db5e0d8f5fcb72b486"/>
             <output name="count_out" md5="9aea787346ad6a1c496aa1d77262a487"/>
@@ -136,12 +151,16 @@ echo 'seq.error(
         </test>
         <test><!--test with qual file and all outputs -->
             <param name="fasta_in" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" ftype="mothur.align"/>
-            <param name="template" value="HMP_MOCK.v35.align" ftype="mothur.align"/>
-            <param name="source" value="history"/>
+            <conditional name="alignment">
+                <param name="source" value="history"/>
+                <param name="template" value="HMP_MOCK.v35.align" ftype="mothur.align"/>
+            </conditional>
             <param name="output_sel" value="summary,seq,seq_forward,seq_reverse,chimera,count,matrix,ref_query,quality,qual_forward,qual_reverse"/>
-            <param name="use" value="yes"/>
-            <param name="qfile_in" value="Mock_S280_L001_R1_001_small.trim.contigs.qual"/>
-            <param name="alignreport_in" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align.report"/>
+            <conditional name="qual">
+                <param name="use" value="yes"/>
+                <param name="qfile_in" value="Mock_S280_L001_R1_001_small.trim.contigs.qual"/>
+                <param name="alignreport_in" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align.report"/>
+            </conditional>
             <output name="chimera_out" md5="78e586f1a1362fd98808d7725d786caa"/>
             <output name="count_out" md5="ee987c7b5dc90d4d3a0ef55d817cc540"/>
             <output name="matrix_out" md5="6b9310b4acd95c560cd062b620b35826"/>

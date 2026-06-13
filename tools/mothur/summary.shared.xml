@@ -110,9 +110,11 @@ echo 'summary.shared(
         </test>
         <test><!-- test with subsample -->
             <param name="otu" value="amazon.mothur.shared"/>
-            <param name="use" value="yes"/>
-            <param name="subsample" value="10"/>
-            <param name="iters" value="42"/>
+            <conditional name="subsample">
+                <param name="use" value="yes"/>
+                <param name="subsample" value="10"/>
+                <param name="iters" value="42"/>
+            </conditional>
             <output name="summary" ftype="tabular">
                 <assert_contents>
                     <has_text text="forest"/>

@@ -139,10 +139,14 @@ echo 'classify.seqs(
     <tests>
         <test><!-- test with wang method -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="source" value="hist"/>
-            <param name="template" value="abrecovery.fasta" ftype="fasta"/>
-            <param name="source2" value="hist"/>
-            <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="template" value="abrecovery.fasta" ftype="fasta"/>
+            </conditional>
+            <conditional name="tax">
+                <param name="source2" value="hist"/>
+                <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            </conditional>
             <output name="tax_summary" ftype="mothur.tax.summary">
                 <assert_contents>
                     <expand macro="test-taxsummary-format"/>
@@ -168,11 +172,17 @@ echo 'classify.seqs(
         </test>
         <test><!-- test with knn method -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="source" value="hist"/>
-            <param name="template" value="abrecovery.fasta" ftype="fasta"/>
-            <param name="source2" value="hist"/>
-            <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
-            <param name="method" value="knn"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="template" value="abrecovery.fasta" ftype="fasta"/>
+            </conditional>
+            <conditional name="tax">
+                <param name="source2" value="hist"/>
+                <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            </conditional>
+            <conditional name="classify">
+                <param name="method" value="knn"/>
+            </conditional>
             <output name="tax_summary" ftype="mothur.tax.summary">
                 <assert_contents>
                     <expand macro="test-taxsummary-format"/>
@@ -191,12 +201,20 @@ echo 'classify.seqs(
         </test>
         <test><!-- test with knn method and blast algorithm -->
             <param name="fasta" value="abrecovery.fasta" ftype="fasta"/>
-            <param name="source" value="hist"/>
-            <param name="template" value="abrecovery.fasta" ftype="fasta"/>
-            <param name="source2" value="hist"/>
-            <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
-            <param name="method" value="knn"/>
-            <param name="algorithm" value="blast"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="template" value="abrecovery.fasta" ftype="fasta"/>
+            </conditional>
+            <conditional name="tax">
+                <param name="source2" value="hist"/>
+                <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            </conditional>
+            <conditional name="classify">
+                <param name="method" value="knn"/>
+                <conditional name="search">
+                    <param name="algorithm" value="blast"/>
+                </conditional>
+            </conditional>
             <output name="tax_summary" ftype="mothur.tax.summary">
                 <assert_contents>
                     <expand macro="test-taxsummary-format"/>

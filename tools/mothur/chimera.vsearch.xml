@@ -108,8 +108,10 @@ echo 'chimera.vsearch(
     <tests>
         <test expect_num_outputs="3"><!-- de novo test with name file -->
             <param name="fasta" value="stool_small.unique.fasta"/>
-            <param name="source" value="names"/>
-            <param name="name" value="stool_small.names"/>
+            <conditional name="template">
+                <param name="source" value="names"/>
+                <param name="name" value="stool_small.names"/>
+            </conditional>
             <output name="vsearch.chimeras" file="stool_small.vsearch.chimeras" ftype="txt"/>
             <output name="out_accnos" file="stool_small.denovo.vsearch.accnos" ftype="mothur.accnos"/>
             <param name="savelog" value="true"/>
@@ -117,8 +119,10 @@ echo 'chimera.vsearch(
         </test>
         <test expect_num_outputs="4"><!-- de novo test with count table-->
             <param name="fasta" value="chimera.fasta"/>
-            <param name="source" value="self"/>
-            <param name="count" value="chimera.count_table" ftype="mothur.count_table"/>
+            <conditional name="template">
+                <param name="source" value="self"/>
+                <param name="count" value="chimera.count_table" ftype="mothur.count_table"/>
+            </conditional>
             <param name="dereplicate" value="true"/>
             <output name="vsearch.chimeras" file="chimera.vsearch.chimeras" ftype="txt"/>
             <output name="out_accnos" file="chimera.vsearch.accnos" ftype="mothur.accnos" sort="true"/>
@@ -128,8 +132,10 @@ echo 'chimera.vsearch(
         </test>
         <test expect_num_outputs="3"><!-- de novo test with count table (missing group info)-->
             <param name="fasta" value="chimera.fasta"/>
-            <param name="source" value="self"/>
-            <param name="count" value="chimera.count_table_wogroups" ftype="mothur.count_table"/>
+            <conditional name="template">
+                <param name="source" value="self"/>
+                <param name="count" value="chimera.count_table_wogroups" ftype="mothur.count_table"/>
+            </conditional>
             <param name="dereplicate" value="true"/>
             <!-- for some reason only for count tables wo group info header is printed -->
             <output name="vsearch.chimeras" file="chimera.vsearch.chimeras_wogroups" ftype="txt"/>
@@ -139,8 +145,10 @@ echo 'chimera.vsearch(
         </test>
         <test expect_num_outputs="3"><!-- test with reference file -->
             <param name="fasta" value="stool_small.unique.fasta"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="stool_small.unique.fasta"/>
+            <conditional name="template">
+                <param name="source" value="hist"/>
+                <param name="reference" value="stool_small.unique.fasta"/>
+            </conditional>
             <output name="vsearch.chimeras" ftype="txt">
                 <assert_contents>
                     <expand macro="test-chimera-format"/>

@@ -181,8 +181,10 @@ echo 'sub.sample(
     </outputs>
     <tests>
         <test><!-- test with list -->
-            <param name="format" value="list"/>
-            <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
+            <conditional name="input">
+                <param name="format" value="list"/>
+                <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
+            </conditional>
             <output_collection name="list_out" count="36">
                 <element name="0.20" ftype="mothur.list">
                     <assert_contents>
@@ -195,12 +197,16 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with list and group file and label select-->
-            <param name="format" value="list"/>
-            <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
-            <param name="to_filter" value="yes"/>
-            <param name="group_in" value="amazon.groups" ftype="mothur.groups"/>
-            <param name="groups" value="forest,pasture"/>
-            <param name="label" value="0.20,0.45,0.55"/>
+            <conditional name="input">
+                <param name="format" value="list"/>
+                <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
+                <conditional name="use_group">
+                    <param name="to_filter" value="yes"/>
+                    <param name="group_in" value="amazon.groups" ftype="mothur.groups"/>
+                    <param name="groups" value="forest,pasture"/>
+                </conditional>
+                <param name="label" value="0.20,0.45,0.55"/>
+            </conditional>
             <output_collection name="list_out" count="3">
                 <element name="0.20" ftype="mothur.list">
                     <assert_contents>
@@ -213,8 +219,10 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with fasta and taxonomy -->
-            <param name="format" value="fasta"/>
-            <param name="otu" value="amazon.fasta" ftype="fasta"/>
+            <conditional name="input">
+                <param name="format" value="fasta"/>
+                <param name="otu" value="amazon.fasta" ftype="fasta"/>
+            </conditional>
             <param name="taxonomy" value="amazon.wang.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
             <output name="fasta_out" ftype="fasta">
                 <assert_contents>
@@ -230,12 +238,16 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with fasta and group file and name file -->
-            <param name="format" value="fasta"/>
-            <param name="otu" value="amazon.fasta" ftype="fasta"/>
-            <param name="to_filter" value="yes"/>
-            <param name="group_in" value="amazon.groups" ftype="mothur.groups"/>
-            <param name="groups" value="forest,pasture"/>
-            <param name="name_in" value="amazon1.names" ftype="mothur.names"/>
+            <conditional name="input">
+                <param name="format" value="fasta"/>
+                <param name="otu" value="amazon.fasta" ftype="fasta"/>
+                <param name="name_in" value="amazon1.names" ftype="mothur.names"/>
+                <conditional name="use_group">
+                    <param name="to_filter" value="yes"/>
+                    <param name="group_in" value="amazon.groups" ftype="mothur.groups"/>
+                    <param name="groups" value="forest,pasture"/>
+                </conditional>
+            </conditional>
             <output name="fasta_out" ftype="fasta">
                 <assert_contents>
                     <has_text_matching expression=">U[0-9]+"/>
@@ -255,10 +267,12 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with shared -->
-            <param name="format" value="shared"/>
-            <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
-            <param name="label" value="unique,0.20"/>
-            <param name="groups" value="forest"/>
+            <conditional name="input">
+                <param name="format" value="shared"/>
+                <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
+                <param name="label" value="unique,0.20"/>
+                <param name="groups" value="forest"/>
+            </conditional>
             <output_collection name="shared_out" count="2">
                 <element name="0.20" ftype="mothur.shared">
                     <assert_contents>
@@ -273,8 +287,10 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with rabund -->
-            <param name="format" value="rabund"/>
-            <param name="otu" value="amazon.an.rabund" ftype="mothur.rabund"/>
+            <conditional name="input">
+                <param name="format" value="rabund"/>
+                <param name="otu" value="amazon.an.rabund" ftype="mothur.rabund"/>
+            </conditional>
             <output name="rabund_out" ftype="mothur.rabund">
                 <assert_contents>
                     <has_text text="unique"/>
@@ -285,8 +301,10 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with sabund -->
-            <param name="format" value="sabund"/>
-            <param name="otu" value="amazon.an.sabund" ftype="mothur.sabund"/>
+            <conditional name="input">
+                <param name="format" value="sabund"/>
+                <param name="otu" value="amazon.an.sabund" ftype="mothur.sabund"/>
+            </conditional>
             <output name="sabund_out" ftype="mothur.sabund">
                 <assert_contents>
                     <has_text text="unique"/>
@@ -297,8 +315,10 @@ echo 'sub.sample(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with count file -->
-            <param name="format" value="fasta"/>
-            <param name="otu" value="amazon.unique.fasta" ftype="fasta"/>
+            <conditional name="input">
+                <param name="format" value="fasta"/>
+                <param name="otu" value="amazon.unique.fasta" ftype="fasta"/>
+            </conditional>
             <param name="count" value="amazon.count_table" ftype="mothur.count_table"/>
             <output name="count_out" ftype="mothur.count_table">
                 <assert_contents>

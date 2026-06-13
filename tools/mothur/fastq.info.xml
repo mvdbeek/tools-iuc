@@ -107,13 +107,15 @@ echo 'fastq.info(
             <param name="fastq" value="Mock_S280_L001_R1_001_small.fastq"/>
             <param name="pacbio" value="false"/>
             <param name="format" value="sanger"/>
-            <param name="oligo|add" value="yes"/>
-            <param name="oligos" value="GQY1XT001.oligos"/>
-            <param name="bdiffs" value="1"/>
-            <param name="pdiffs" value="3"/>
-            <param name="tdiffs" value="3"/>
-            <param name="ldiffs" value="3"/>
-            <param name="sdiffs" value="7"/>
+            <conditional name="oligo">
+                <param name="add" value="yes"/>
+                <param name="oligos" value="GQY1XT001.oligos"/>
+                <param name="bdiffs" value="1"/>
+                <param name="pdiffs" value="3"/>
+                <param name="tdiffs" value="3"/>
+                <param name="ldiffs" value="3"/>
+                <param name="sdiffs" value="7"/>
+            </conditional>
             <output name="fasta_out" ftype="fasta">
                 <assert_contents>
                     <expand macro="test-fasta-format"/>
@@ -149,13 +151,15 @@ echo 'fastq.info(
             <param name="fastq" value="Mock_S280_L001_R1_001_small.fastq"/>
             <param name="pacbio" value="false"/>
             <param name="format" value="sanger"/>
-            <param name="oligo|add" value="yes"/>
-            <param name="oligos" value="HMPv5-v3_1368-1369.oligos"/>
-            <param name="bdiffs" value="1"/>
-            <param name="pdiffs" value="3"/>
-            <param name="tdiffs" value="3"/>
-            <param name="ldiffs" value="3"/>
-            <param name="sdiffs" value="7"/>
+            <conditional name="oligo">
+                <param name="add" value="yes"/>
+                <param name="oligos" value="HMPv5-v3_1368-1369.oligos"/>
+                <param name="bdiffs" value="1"/>
+                <param name="pdiffs" value="3"/>
+                <param name="tdiffs" value="3"/>
+                <param name="ldiffs" value="3"/>
+                <param name="sdiffs" value="7"/>
+            </conditional>
             <output name="fasta_out">
                 <assert_contents>
                     <expand macro="test-fasta-format"/>

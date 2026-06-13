@@ -88,18 +88,31 @@ echo 'sens.spec(
     </outputs>
     <tests>
         <test>
-	<param name="count" value="amazon.count_table"/>
-	<param name="otu" value="amazon.an.list" ftype="mothur.list"/>
+            <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
             <param name="dist" value="amazon.dist" ftype="mothur.dist"/>
+            <conditional name="matrix">
+                <param name="format" value="column"/>
+                <param name="dist" value="amazon.dist" ftype="mothur.pair.dist"/>
+                <conditional name="method_name">
+                    <param name="method" value="count"/>
+                    <param name="count" value="amazon.count_table"/>
+                </conditional>
+            </conditional>
             <output name="sensspec" md5="720789a7ef4da26928a61161279d7344" ftype="tabular"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
         </test>
         <test>
-	    <param name="count" value="amazon.count_table"/>
-	    <param name="names" value="amazon.names"/>
             <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
             <param name="dist" value="amazon.dist" ftype="mothur.dist"/>
+            <conditional name="matrix">
+                <param name="format" value="column"/>
+                <param name="dist" value="amazon.dist" ftype="mothur.pair.dist"/>
+                <conditional name="method_name">
+                    <param name="method" value="name"/>
+                    <param name="names" value="amazon.names"/>
+                </conditional>
+            </conditional>
             <param name="cutoff" value="0.10"/>
             <param name="label" value="0.03,0.05,0.22"/>
             <output name="sensspec" md5="3992dec1d799ec3a061b3ef713a58382" ftype="tabular"/>

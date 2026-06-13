@@ -85,9 +85,11 @@ echo 'libshuff(
             <param name="dist" value="amazon.dist" ftype="mothur.dist"/>
             <param name="group" value="amazon.groups" ftype="mothur.groups"/>
             <param name="groups" value="forest,pasture"/>
-            <param name="form2" value="discrete"/>
-            <param name="step" value="0.25"/>
-            <param name="cutoff" value="0.25"/>
+            <conditional name="form">
+                <param name="form2" value="discrete"/>
+                <param name="step" value="0.25"/>
+                <param name="cutoff" value="0.25"/>
+            </conditional>
             <output name="summary">
                 <assert_contents>
                     <has_text text="forest-pasture"/>

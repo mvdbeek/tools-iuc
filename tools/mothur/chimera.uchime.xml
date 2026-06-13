@@ -158,8 +158,10 @@ echo 'chimera.uchime(
     <tests>
         <test><!-- default params test -->
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head_withchimera"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
+            <conditional name="template">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
             <output name="uchime.chimeras" file="Mock_S280_L001_R1_001_small.trim.contigs.good.ref.uchime.chimeras" ftype="txt"/>
             <output name="out_accnos" file="Mock_S280_L001_R1_001_small.trim.contigs.good.ref.uchime.accnos" ftype="mothur.accnos"/>
             <param name="savelog" value="true"/>
@@ -167,7 +169,9 @@ echo 'chimera.uchime(
         </test>
         <test><!-- de novo test -->
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="self"/>
+            <conditional name="template">
+                <param name="source" value="self"/>
+            </conditional>
             <output name="uchime.chimeras" file="Mock_S280_L001_R1_001_small.trim.contigs.good.denovo.uchime.chimeras" ftype="txt"/>
             <output name="out_accnos" md5="d41d8cd98f00b204e9800998ecf8427e" ftype="mothur.accnos"/>
             <param name="savelog" value="true"/>
@@ -175,8 +179,10 @@ echo 'chimera.uchime(
         </test>
         <test><!-- with chimealns output -->
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head_withchimera"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
+            <conditional name="template">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
             <param name="chimealns" value="true"/>
             <output name="uchime.chimeras" file="Mock_S280_L001_R1_001_small.trim.contigs.good.ref.uchime.chimeras" ftype="txt"/>
             <output name="out_accnos" file="Mock_S280_L001_R1_001_small.trim.contigs.good.ref.uchime.accnos" ftype="mothur.accnos"/>

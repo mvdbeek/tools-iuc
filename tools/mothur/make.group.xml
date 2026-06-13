@@ -65,39 +65,45 @@ echo 'make.group(
     </outputs>
     <tests>
         <test> <!-- test manual groups creation -->
-            <param name="how" value="manually"/>
-            <repeat name="inputs">
-                <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-                <param name="group" value="testgroup"/>
-            </repeat>
-            <repeat name="inputs">
-                <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-                <param name="group" value="testgroup2"/>
-            </repeat>
+            <conditional name="method">
+                <param name="how" value="manually"/>
+                <repeat name="inputs">
+                    <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
+                    <param name="group" value="testgroup"/>
+                </repeat>
+                <repeat name="inputs">
+                    <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
+                    <param name="group" value="testgroup2"/>
+                </repeat>
+            </conditional>
             <output name="output" file="Mock_S280_L001_R1_001_small.trim.contigs.good.Mock_S280_L001_R1_001_small.trim.contigs.good.groups"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
         </test>
         <test> <!-- test auto-creation from collection -->
-            <param name="how" value="collection"/>
-            <param name="fasta_collection">
-               <collection type="list">
-                   <element name="testgroup" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
-                   <element name="testgroup2" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
-              </collection>
-           </param>
+            <conditional name="method">
+                <param name="how" value="collection"/>
+                <param name="fasta_collection">
+                   <collection type="list">
+                       <element name="testgroup" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
+                       <element name="testgroup2" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
+                  </collection>
+               </param>
+            </conditional>
            <output name="output" file="Mock_S280_L001_R1_001_small.trim.contigs.good.Mock_S280_L001_R1_001_small.trim.contigs.good.groups"/>
            <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
         </test>
         <test> <!-- test with spaces or hyphens in element identifier -->
-            <param name="how" value="collection"/>
-            <param name="fasta_collection">
-               <collection type="list">
-                   <element name="test group" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
-                   <element name="test-group2" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
-              </collection>
-           </param>
+            <conditional name="method">
+                <param name="how" value="collection"/>
+                <param name="fasta_collection">
+                   <collection type="list">
+                       <element name="test group" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
+                       <element name="test-group2" ftype="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head" />
+                  </collection>
+               </param>
+            </conditional>
            <output name="output" file="make_group_collection.groups"/>
            <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>

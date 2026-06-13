@@ -101,8 +101,10 @@ echo 'chimera.pintail(
     <tests>
         <test>
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
             <param name="quantile" value="HMP_MOCK.v35.pintail.quan"/>
             <param name="window" value="200"/>
             <output name="pintail.chimeras" md5="644fe23ee459a76de7b225e530361865" ftype="txt"/>
@@ -112,9 +114,13 @@ echo 'chimera.pintail(
         </test>
         <test>
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
-            <param name="source2" value="default"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
+            <conditional name="mask_cond">
+                <param name="source2" value="default"/>
+            </conditional>
             <param name="window" value="200"/>
             <output name="pintail.chimeras" ftype="txt">
                 <assert_contents>

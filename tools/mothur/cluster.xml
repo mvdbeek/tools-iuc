@@ -105,8 +105,10 @@ echo 'cluster(
     </outputs>
     <tests>
         <test><!-- test with phylip input -->
-            <param name="format" value="phylip"/>
-            <param name="dist" value="amazon.dist"/>
+            <conditional name="matrix">
+                <param name="format" value="phylip"/>
+                <param name="dist" value="amazon.dist"/>
+            </conditional>
             <output name="rabund" ftype="mothur.rabund">
                 <assert_contents>
                     <has_line_matching expression="^0\.03(\t\d+)+$"/>
@@ -128,9 +130,11 @@ echo 'cluster(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with column input -->
-            <param name="format" value="column"/>
-            <param name="dist" value="amazon.pair.dist"/>
-            <param name="name" value="amazon.names"/>
+            <conditional name="matrix">
+                <param name="format" value="column"/>
+                <param name="dist" value="amazon.pair.dist"/>
+                <param name="name" value="amazon.names"/>
+            </conditional>
             <output name="rabund" ftype="mothur.rabund">
                 <assert_contents>
                     <has_line_matching expression="^0\.03(\t\d+)+$"/>
@@ -152,9 +156,11 @@ echo 'cluster(
             <expand macro="logfile-test"/>
         </test>
         <test><!-- test with column input -->
-            <param name="format" value="column"/>
-            <param name="dist" value="amazon.pair.dist"/>
-            <param name="name" value="amazon.names"/>
+            <conditional name="matrix">
+                <param name="format" value="column"/>
+                <param name="dist" value="amazon.pair.dist"/>
+                <param name="name" value="amazon.names"/>
+            </conditional>
             <output name="rabund" ftype="mothur.rabund">
                 <assert_contents>
                     <has_line_matching expression="^0\.03(\t\d+)+$"/>

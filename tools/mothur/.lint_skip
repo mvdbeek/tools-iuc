@@ -4,6 +4,5 @@ OutputsFilterExpression
 OutputsFormatSourceReference
 OutputsLabelDuplicatedFilter
 OutputsNameInvalidCheetah
-TestsCaseValidation
 TestsExpectNumOutputs
 TestsParamInInputs

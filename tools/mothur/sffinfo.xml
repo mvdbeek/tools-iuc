@@ -96,8 +96,10 @@ echo 'sffinfo(
         </test>
         <test><!-- test with oligos file -->
             <param name="sff" value="Fasting_Example1.sff"/>
-            <param name="add" value="yes"/>
-            <param name="oligos" value="GQY1XT001.oligos"/>
+            <conditional name="oligo">
+                <param name="add" value="yes"/>
+                <param name="oligos" value="GQY1XT001.oligos"/>
+            </conditional>
             <output name="out_fasta" md5="212fa15e1ed077cecb65ee87f17ef2e1" ftype="fasta"/>
             <output name="out_qfile" md5="ffcc4831369139055e1b8e9add9a59c0" ftype="qual454"/>
             <output name="out_flow" md5="34b17477f98ab19c1ff755a61848d968" ftype="mothur.sff.flow"/>

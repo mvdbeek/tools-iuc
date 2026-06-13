@@ -162,8 +162,10 @@ echo 'split.abund(
     <tests>
         <test><!-- test with count table -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="type" value="count"/>
-            <param name="input" value="amazon.count_table" ftype="mothur.count_table"/>
+            <conditional name="search">
+                <param name="type" value="count"/>
+                <param name="input" value="amazon.count_table" ftype="mothur.count_table"/>
+            </conditional>
             <param name="cutoff" value="1"/>
             <param name="accnos" value="true"/>
             <output name="abund_fasta" md5="3c147ce7224bc8c8602d2ccfe4b6eae7" ftype="fasta"/>
@@ -177,8 +179,10 @@ echo 'split.abund(
         </test>
         <test><!-- test with name file and accnos output -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="type" value="name"/>
-            <param name="input" value="amazon.names" ftype="mothur.names"/>
+            <conditional name="search">
+                <param name="type" value="name"/>
+                <param name="input" value="amazon.names" ftype="mothur.names"/>
+            </conditional>
             <param name="cutoff" value="1"/>
             <param name="accnos" value="true"/>
             <output name="abund_fasta" md5="3c147ce7224bc8c8602d2ccfe4b6eae7" ftype="fasta"/>
@@ -192,13 +196,17 @@ echo 'split.abund(
         </test>
         <test><!-- test with name file and accnos output with groups-->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="type" value="name"/>
-            <param name="input" value="amazon.names" ftype="mothur.names"/>
+            <conditional name="search">
+                <param name="type" value="name"/>
+                <param name="input" value="amazon.names" ftype="mothur.names"/>
+            </conditional>
             <param name="cutoff" value="1"/>
             <param name="accnos" value="true"/>
-            <param name="dosplit" value="yes"/>
-            <param name="group" value="amazon.groups" ftype="mothur.groups"/>
-            <param name="groups" value="forest,pasture"/>
+            <conditional name="split">
+                <param name="dosplit" value="yes"/>
+                <param name="group" value="amazon.groups" ftype="mothur.groups"/>
+                <param name="groups" value="forest,pasture"/>
+            </conditional>
             <output_collection name="abund_fasta_coll" count="2">
                 <element name="forest" md5="8d90da3c099450e31de006548e8f458c" ftype="fasta"/>
             </output_collection>
@@ -228,13 +236,17 @@ echo 'split.abund(
         </test>
         <test><!-- test with list -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="type" value="list"/>
-            <param name="input" value="amazon.an.list" ftype="mothur.list"/>
+            <conditional name="search">
+                <param name="type" value="list"/>
+                <param name="input" value="amazon.an.list" ftype="mothur.list"/>
+            </conditional>
             <param name="cutoff" value="2"/>
             <param name="accnos" value="true"/>
-            <param name="dosplit" value="yes"/>
-            <param name="group" value="amazon.groups" ftype="mothur.groups"/>
-            <param name="groups" value="forest,pasture"/>
+            <conditional name="split">
+                <param name="dosplit" value="yes"/>
+                <param name="group" value="amazon.groups" ftype="mothur.groups"/>
+                <param name="groups" value="forest,pasture"/>
+            </conditional>
             <output_collection name="abund_fasta_coll" count="72">
                 <element name="0.05.forest" md5="1860c0cf143a2b7adc93c88418ed3559" ftype="fasta"/>
             </output_collection>
@@ -264,14 +276,18 @@ echo 'split.abund(
         </test>
         <test><!-- test with list and label and group select-->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="type" value="list"/>
-            <param name="input" value="amazon.an.list" ftype="mothur.list"/>
+            <conditional name="search">
+                <param name="type" value="list"/>
+                <param name="input" value="amazon.an.list" ftype="mothur.list"/>
+                <param name="label" value="0.05,0.22"/>
+            </conditional>
             <param name="cutoff" value="2"/>
-            <param name="label" value="0.05,0.22"/>
             <param name="accnos" value="true"/>
-            <param name="dosplit" value="yes"/>
-            <param name="group" value="amazon.groups" ftype="mothur.groups"/>
-            <param name="groups" value="forest,pasture"/>
+            <conditional name="split">
+                <param name="dosplit" value="yes"/>
+                <param name="group" value="amazon.groups" ftype="mothur.groups"/>
+                <param name="groups" value="forest,pasture"/>
+            </conditional>
             <output_collection name="abund_fasta_coll" count="4">
                 <element name="0.05.pasture" md5="51327cbf0c66c9c3074ca3456b021ead" ftype="fasta"/>
             </output_collection>

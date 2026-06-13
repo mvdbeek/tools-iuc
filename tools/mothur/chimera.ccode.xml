@@ -82,8 +82,10 @@ echo 'chimera.ccode(
     <tests>
         <test>
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
             <output name="ccode.chimeras" ftype="txt">
                 <assert_contents>
                     <has_line_matching expression="^Window\tAvgQ\t\(sdQ\)\tAvgR\t\(sdR\)\tRatio\tAnova$"/>
@@ -96,9 +98,13 @@ echo 'chimera.ccode(
         </test>
         <test> <!-- test with default ecoli mask -->
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
-            <param name="source2" value="default"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
+            <conditional name="mask_cond">
+                <param name="source2" value="default"/>
+            </conditional>
             <param name="window" value="100"/>
             <output name="ccode.chimeras" ftype="txt">
                 <assert_contents>

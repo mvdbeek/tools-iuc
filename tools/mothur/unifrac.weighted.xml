@@ -162,10 +162,12 @@ echo 'unifrac.weighted(
             <param name="tree" value="abrecovery.tre" ftype="mothur.tre"/>
             <param name="group" value="abrecovery.groups" ftype="mothur.groups"/>
             <param name="groups" value="A,B,C"/>
-            <param name="use" value="yes"/>
-            <param name="subsample" value="10"/>
+            <conditional name="subsampling">
+                <param name="use" value="yes"/>
+                <param name="subsample" value="10"/>
+                <param name="consensus" value="true"/>
+            </conditional>
             <param name="distance" value="column"/>
-            <param name="consensus" value="true"/>
             <output name="summary" md5="f723493c1b909f5dbe5688d36be9fe73" ftype="tabular"/>
             <output name="dist" md5="f017b1d7c7de38f4b90a1d8e07c8605c" ftype="mothur.pair.dist"/>
             <output name="ave_dist" ftype="mothur.pair.dist">

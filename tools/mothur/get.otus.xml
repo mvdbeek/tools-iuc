@@ -126,8 +126,10 @@ echo 'get.otus(
         <test><!-- test with shared and otu.corr file and label select -->
             <param name="shared" value="amazon.an.shared" ftype="mothur.shared"/>
             <param name="accnos" value="amazon.otus.accnos" ftype="mothur.accnos"/>
-            <param name="label" value="0.03"/>
-            <param name="source" value="shared"/>
+            <conditional name="labelsource">
+                <param name="source" value="shared"/>
+                <param name="label" value="0.03"/>
+            </conditional>
             <param name="otucorr" value="amazon.an.0.03.pearson.otu.corr" ftype="mothur.cons.taxonomy"/>
             <output name="shared_out" ftype="mothur.shared">
                 <assert_contents>

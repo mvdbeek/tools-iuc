@@ -75,18 +75,24 @@ echo 'chimera.check(
     <tests>
         <test>
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
             <output name="chimeracheck.chimeras" file="Mock_S280_L001_R1_001_small.trim.contigs.good.chimeracheck.chimeras" ftype="txt"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
         </test>
         <test>
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.good.align_head"/>
-            <param name="source" value="hist"/>
-            <param name="reference" value="HMP_MOCK.v35.align"/>
-            <param name="svg" value="yes"/>
-            <param name="name" value="Mock_S280_L001_R1_001_small.trim.contigs.good.names_tiny"/>
+            <conditional name="alignment">
+                <param name="source" value="hist"/>
+                <param name="reference" value="HMP_MOCK.v35.align"/>
+            </conditional>
+            <conditional name="svg_cond">
+                <param name="svg" value="yes"/>
+                <param name="name" value="Mock_S280_L001_R1_001_small.trim.contigs.good.names_tiny"/>
+            </conditional>
             <output name="chimeracheck.chimeras" file="Mock_S280_L001_R1_001_small.trim.contigs.good.chimeracheck.chimeras" ftype="txt"/>
             <output_collection name="images" count="2">
                 <element name="M00967_43_000000000-A3JHG_1_1101_14010_4122" file="M00967_43_000000000-A3JHG_1_1101_14010_4122.chimeracheck.svg"/>

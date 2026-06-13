@@ -48,8 +48,10 @@ echo 'get.dists(
     </outputs>
     <tests>
         <test>
-            <param name="source" value="phylip"/>
-            <param name="dist" value="98_sq_phylip_amazon.dist" ftype="mothur.square.dist"/>
+            <conditional name="input">
+                <param name="source" value="phylip"/>
+                <param name="dist" value="98_sq_phylip_amazon.dist" ftype="mothur.square.dist"/>
+            </conditional>
             <param name="accnos" value="amazon.bad.accnos" ftype="mothur.accnos"/>
             <output name="pick_dist" md5="d853cca7b67723e889a563420f6ccc13" ftype="mothur.square.dist"/>
             <param name="savelog" value="true"/>

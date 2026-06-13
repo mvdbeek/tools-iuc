@@ -60,8 +60,10 @@ echo 'align.check(
     <tests>
         <test><!-- test with defaults -->
             <param name="fasta" value="amazon.align_head_short"/>
-            <param name="source" value="history"/>
-            <param name="map" value="silva.ss.map.head"/>
+            <conditional name="ss">
+                <param name="source" value="history"/>
+                <param name="map" value="silva.ss.map.head"/>
+            </conditional>
             <output name="align.check" ftype="mothur.align.check">
                 <assert_contents>
                     <expand macro="test-aligncheck-format"/>
@@ -73,8 +75,10 @@ echo 'align.check(
         </test>
         <test><!-- test with names file -->
             <param name="fasta" value="amazon.align_head_short"/>
-            <param name="source" value="history"/>
-            <param name="map" value="silva.ss.map.head"/>
+            <conditional name="ss">
+                <param name="source" value="history"/>
+                <param name="map" value="silva.ss.map.head"/>
+            </conditional>
             <param name="name" value="amazon.align_head.names"/>
             <output name="align.check" ftype="mothur.align.check">
                 <assert_contents>

@@ -166,9 +166,11 @@ echo 'rarefaction.shared(
         </test>
         <test><!-- test with design file -->
             <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
-            <param name="usedesign" value="yes"/>
-            <param name="design" value="toymothur.design2" ftype="mothur.design"/>
-            <param name="sets" value="tardis,dalek"/>
+            <conditional name="designc">
+                <param name="usedesign" value="yes"/>
+                <param name="design" value="toymothur.design2" ftype="mothur.design"/>
+                <param name="sets" value="tardis,dalek"/>
+            </conditional>
             <output name="group_rarefaction">
                 <assert_contents>
                     <has_text text="numsampled"/>

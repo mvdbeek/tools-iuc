@@ -69,8 +69,10 @@ echo 'summary.tax(
     </outputs>
     <tests>
         <test>
-            <param name="source" value="hist"/>
-            <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            <conditional name="tax">
+                <param name="source" value="hist"/>
+                <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            </conditional>
             <output name="taxsummary" ftype="mothur.tax.summary">
                 <assert_contents>
                     <expand macro="test-taxsummary-format"/>
@@ -82,8 +84,10 @@ echo 'summary.tax(
             <expand macro="logfile-test"/>
         </test>
         <test>
-            <param name="source" value="hist"/>
-            <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            <conditional name="tax">
+                <param name="source" value="hist"/>
+                <param name="taxonomy" value="abrecovery.pds.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
+            </conditional>
             <output name="taxsummary" ftype="mothur.tax.summary">
                 <assert_contents>
                     <expand macro="test-taxsummary-format"/>

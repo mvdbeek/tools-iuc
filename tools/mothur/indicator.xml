@@ -83,10 +83,12 @@ echo 'indicator(
     <tests>
         <test><!-- test with design input -->
             <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
-            <param name="havedesign" value="yes"/>
-            <param name="design" value="toymothur.design2" ftype="mothur.design"/>
             <param name="label" value="0.03"/>
-            <param name="groups" value="tardis,dalek"/>
+            <conditional name="withdesign">
+                <param name="havedesign" value="yes"/>
+                <param name="design" value="toymothur.design2" ftype="mothur.design"/>
+                <param name="groups" value="tardis,dalek"/>
+            </conditional>
             <output name="summary">
                 <assert_contents>
                     <has_line_matching expression="^OTU\tIndicator_Groups\tIndicator_Value\tpValue$"/>
@@ -99,9 +101,11 @@ echo 'indicator(
         </test>
         <test><!-- test with design input and subset of groups-->
             <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
-            <param name="havedesign" value="yes"/>
-            <param name="design" value="toymothur.design2" ftype="mothur.design"/>
-            <param name="groups" value="tardis"/>
+            <conditional name="withdesign">
+                <param name="havedesign" value="yes"/>
+                <param name="design" value="toymothur.design2" ftype="mothur.design"/>
+                <param name="groups" value="tardis"/>
+            </conditional>
             <output name="summary">
                 <assert_contents>
                     <has_line_matching expression="^OTU\tIndicator_Groups\tIndicator_Value\tpValue$"/>
@@ -114,9 +118,11 @@ echo 'indicator(
         </test>
         <test><!-- test with tree input -->
             <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
-            <param name="havedesign" value="no"/>
-            <param name="tree" value="amazon.an.jclass.unique.tre"/>
-            <param name="groups" value="forest,pasture"/>
+            <conditional name="withdesign">
+                <param name="havedesign" value="no"/>
+                <param name="tree" value="amazon.an.jclass.unique.tre"/>
+                <param name="groups" value="forest,pasture"/>
+            </conditional>
             <output name="summary">
                 <assert_contents>
                     <has_text text="TreeNode"/>
@@ -129,9 +135,11 @@ echo 'indicator(
         </test>
         <test><!-- test with tree input and subset of groups -->
             <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
-            <param name="havedesign" value="no"/>
-            <param name="tree" value="amazon.an.jclass.unique.tre"/>
-            <param name="groups" value="forest"/>
+            <conditional name="withdesign">
+                <param name="havedesign" value="no"/>
+                <param name="tree" value="amazon.an.jclass.unique.tre"/>
+                <param name="groups" value="forest"/>
+            </conditional>
             <output name="summary">
                 <assert_contents>
                     <has_text text="TreeNode"/>

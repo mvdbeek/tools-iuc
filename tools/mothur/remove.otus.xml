@@ -65,9 +65,11 @@ echo 'remove.otus(
     <tests>
         <test><!-- test with shared/list input and label selection -->
             <param name="accnos" value="amazon.accnos.otulabels"/>
-            <param name="intype" value="in_shared"/>
-            <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
-            <param name="label" value="0.22"/>
+            <conditional name="infile">
+                <param name="intype" value="in_shared"/>
+                <param name="otu" value="amazon.an.list" ftype="mothur.list"/>
+                <param name="label" value="0.22"/>
+            </conditional>
             <output name="pick_out" ftype="mothur.list">
                 <assert_contents>
                     <expand macro="test-list-format"/>
@@ -81,8 +83,10 @@ echo 'remove.otus(
         </test>
         <test><!-- test with constaxonomy/otucorr/corraxes file -->
             <param name="accnos" value="amazon.accnos.otulabels"/>
-            <param name="intype" value="in_other"/>
-            <param name="otu" value="amazon.pcoa.axes" ftype="mothur.axes"/>
+            <conditional name="infile">
+                <param name="intype" value="in_other"/>
+                <param name="otu" value="amazon.pcoa.axes" ftype="mothur.axes"/>
+            </conditional>
             <output name="pick_out" ftype="mothur.axes">
                 <assert_contents>
                     <expand macro="test-axes-format"/>

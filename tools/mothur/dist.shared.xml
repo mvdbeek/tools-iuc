@@ -102,7 +102,9 @@ echo 'dist.shared(
         <test><!-- test with subsampling without specifying size -->
             <param name="otu" value="amazon.an.shared" ftype="mothur.shared"/>
             <param name="label" value="0.03,0.33"/>
-            <param name="use" value="yes"/>
+            <conditional name="subsampling">
+                <param name="use" value="yes"/>
+            </conditional>
             <param name="calc" value="canberra"/>
             <param name="output" value="square"/>
             <output_collection name="distfiles" count="6">
@@ -118,9 +120,11 @@ echo 'dist.shared(
         </test>
         <test><!-- test with subsampling with specifying size-->
             <param name="otu" value="amazon.mothur.shared" ftype="mothur.shared"/>
-            <param name="use" value="yes"/>
-            <param name="subsample" value="2"/>
-            <param name="iters" value="42"/>
+            <conditional name="subsampling">
+                <param name="use" value="yes"/>
+                <param name="subsample" value="2"/>
+                <param name="iters" value="42"/>
+            </conditional>
             <param name="label" value="0.10"/>
             <param name="calc" value="canberra"/>
             <param name="output" value="square"/>

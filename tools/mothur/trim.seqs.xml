@@ -176,10 +176,12 @@ echo 'trim.seqs(
         </test>
         <test><!-- test with oligos -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="add" value="yes"/>
-            <param name="oligos" value="GQY1XT001.oligos" ftype="mothur.oligos"/>
-            <param name="bdiffs" value="100"/>
-            <param name="pdiffs" value="100"/>
+            <conditional name="oligo">
+                <param name="add" value="yes"/>
+                <param name="oligos" value="GQY1XT001.oligos" ftype="mothur.oligos"/>
+                <param name="bdiffs" value="100"/>
+                <param name="pdiffs" value="100"/>
+            </conditional>
             <output name="trim_fasta" md5="75a8a3ae2d1fe1ff2b860480b84e9bd6" ftype="fasta"/>
             <output name="scrap_fasta" md5="c4fd14e70ab7d1c21d238e87624829d7" ftype="fasta"/>
             <output name="groups_file" md5="198957282c234e825414e175d926046a" ftype="mothur.groups"/>
@@ -188,11 +190,13 @@ echo 'trim.seqs(
         </test>
         <test><!-- test with oligos and allfiles parameter -->
             <param name="fasta" value="amazon.fasta" ftype="fasta"/>
-            <param name="add" value="yes"/>
-            <param name="oligos" value="GQY1XT001.oligos" ftype="mothur.oligos"/>
-            <param name="bdiffs" value="100"/>
-            <param name="pdiffs" value="100"/>
-            <param name="allfiles" value="true"/>
+            <conditional name="oligo">
+                <param name="add" value="yes"/>
+                <param name="oligos" value="GQY1XT001.oligos" ftype="mothur.oligos"/>
+                <param name="bdiffs" value="100"/>
+                <param name="pdiffs" value="100"/>
+                <param name="allfiles" value="true"/>
+            </conditional>
             <output name="trim_fasta" md5="75a8a3ae2d1fe1ff2b860480b84e9bd6" ftype="fasta"/>
             <output name="scrap_fasta" md5="c4fd14e70ab7d1c21d238e87624829d7" ftype="fasta"/>
             <output_collection name="groups_allfiles" count="9">
@@ -206,8 +210,10 @@ echo 'trim.seqs(
         </test>
         <test><!-- test with qfile-->
             <param name="fasta" value="Fasting_Example1.fasta" ftype="fasta"/>
-            <param name="add2" value="yes"/>
-            <param name="qfile" value="Fasting_Example1.qual" ftype="qual454"/>
+            <conditional name="qual">
+                <param name="add2" value="yes"/>
+                <param name="qfile" value="Fasting_Example1.qual" ftype="qual454"/>
+            </conditional>
             <param name="maxhomop" value="4"/>
             <output name="trim_fasta" md5="d02f74acd6d9fb52b04a93869bb79302" ftype="fasta"/>
             <output name="scrap_fasta" md5="a4d3ef3d91b4c0146ec84bb7aad3987c" ftype="fasta"/>

@@ -105,10 +105,12 @@ echo 'pcr.seqs(
     <tests>
         <test><!-- test with position method -->
             <param name="fasta" value="amazon.align_head" ftype="mothur.align"/>
-            <param name="keepdots" value=""/>
-            <param name="method" value="position"/>
-            <param name="start" value="0"/>
-            <param name="end" value="0"/>
+            <param name="keepdots" value="true"/>
+            <conditional name="trim">
+                <param name="method" value="position"/>
+                <param name="start" value="0"/>
+                <param name="end" value="0"/>
+            </conditional>
             <param name="pdiffs" value="0"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
@@ -117,9 +119,11 @@ echo 'pcr.seqs(
         </test>
         <test><!-- test with reference method -->
             <param name="fasta" value="amazon.align_head" ftype="mothur.align"/>
-            <param name="keepdots" value="keepdots=false,"/>
-            <param name="method" value="reference"/>
-            <param name="ecoli" value="amazon.align_head" ftype="mothur.align"/>
+            <param name="keepdots" value="false"/>
+            <conditional name="trim">
+                <param name="method" value="reference"/>
+                <param name="ecoli" value="amazon.align_head" ftype="mothur.align"/>
+            </conditional>
             <param name="name_in" value="amazon.align_head.names"/>
             <param name="pdiffs" value="2"/>
             <param name="savelog" value="true"/>
@@ -130,13 +134,13 @@ echo 'pcr.seqs(
         </test>
         <test><!-- test with oligos and all outputs -->
             <param name="fasta" value="amazon.align_head" ftype="mothur.align"/>
-            <param name="method" value="oligos"/>
-            <param name="oligos" value="GQY1XT001.oligos" ftype="mothur.oligos"/>
+            <conditional name="trim">
+                <param name="method" value="oligos"/>
+                <param name="oligos" value="GQY1XT001.oligos" ftype="mothur.oligos"/>
+            </conditional>
             <param name="name_in" value="amazon.names" ftype="mothur.names"/>
             <param name="group_in" value="amazon.groups" ftype="mothur.groups"/>
             <param name="taxonomy_in" value="amazon.wang.wang.taxonomy" ftype="mothur.seq.taxonomy"/>
-            <param name="start" value="5"/>
-            <param name="end" value="50"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
             <output name="pcr_fasta" md5="d41d8cd98f00b204e9800998ecf8427e" ftype="mothur.align"/>

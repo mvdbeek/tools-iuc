@@ -73,8 +73,10 @@ echo 'make.fastq(
         <test><!-- test with quality score format conversion -->
             <param name="fasta" value="Mock_S280_L001_R1_001_small.trim.contigs.fasta"/>
             <param name="qfile" value="Mock_S280_L001_R1_001_small.trim.contigs.qual" ftype="qual454"/>
-            <param name="use" value="yes"/>
-            <param name="format" value="illumina"/>
+            <conditional name="chooseformat">
+                <param name="use" value="yes"/>
+                <param name="format" value="illumina"/>
+            </conditional>
             <output name="fastq" ftype="fastqillumina">
                 <assert_contents>
                     <expand macro="test-fastq-format"/>

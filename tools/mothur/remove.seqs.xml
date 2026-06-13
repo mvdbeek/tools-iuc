@@ -138,7 +138,7 @@
         <test>
             <param name="accnos" value="Mock_S280_L001_R1_001_small.trim.contigs.bad.accnos"/>
             <param name="fasta_in" value="Mock_S280_L001_R1_001_small.trim.contigs.fasta"/>
-            <param name="dups" value=""/>
+            <param name="dups" value="true"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
             <output name="fasta_out">
@@ -164,7 +164,7 @@
             <param name="accnos" value="Mock_S280_L001_R1_001_small.trim.contigs.bad.accnos"/>
             <param name="fasta_in" value="Mock_S280_L001_R1_001_small.trim.contigs.fasta"/>
             <param name="fastq_in" value="Mock_S280_L001_R1_001_small.fastq"/>
-            <param name="dups" value=",dups=false"/>
+            <param name="dups" value="false"/>
             <param name="savelog" value="true"/>
             <expand macro="logfile-test"/>
             <output name="fasta_out">
