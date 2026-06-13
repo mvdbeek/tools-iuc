@@ -8,7 +8,7 @@ env:
   GALAXY_FORK: mvdbeek
   GALAXY_BRANCH: async-submission-parse-fix
   MAX_CHUNKS: 40
-  PLANEMO_VERSION: "git+https://github.com/mvdbeek/planemo.git@async-submission"
+  CUSTOM_PLANEMO_VERSION: "git+https://github.com/mvdbeek/planemo.git@async-submission"
 jobs:
   setup:
     name: Setup cache and determine changed repositories
@@ -44,7 +44,7 @@ jobs:
       id: discover
       with:
         create-cache: ${{ steps.cache-pip.outputs.cache-hit != 'true' }}
-        planemo-version: ${{ env.PLANEMO_VERSION }}
+        planemo-version: ${{ env.CUSTOM_PLANEMO_VERSION }}
         galaxy-fork: ${{ env.GALAXY_FORK }}
         galaxy-branch: ${{ env.GALAXY_BRANCH }}
         max-chunks: ${{ env.MAX_CHUNKS }}
@@ -97,7 +97,7 @@ jobs:
       id: test
       with:
         mode: test
-        planemo-version: ${{ env.PLANEMO_VERSION }}
+        planemo-version: ${{ env.CUSTOM_PLANEMO_VERSION }}
         repository-list: ${{ needs.setup.outputs.repository-list }}
         galaxy-fork: ${{ env.GALAXY_FORK }}
         galaxy-branch: ${{ env.GALAXY_BRANCH }}
