@@ -756,7 +756,7 @@
                 </conditional>
                 <conditional name="optional_inputs">
                     <param name="optional_inputs_selector" value="set" />
-                    <param name="trim_complex_tail" value="--trim-complex-tail"/>
+                    <param name="trim_complex_tail" value="true"/>
                 </conditional>
             </conditional>
             <output name="output_vcf" file="freebayes-phix174-test4.vcf" lines_diff="4" />

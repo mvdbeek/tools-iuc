@@ -399,14 +399,18 @@
                     </param>
                 </conditional>
             </repeat>
-            <conditional name="doComp">
-                <param name="compare_selector" value="0"/>
-                <param name="compFile" value="PE_comp.g1.vs.g2.txt"/>
-            </conditional>
+            <section name="mcomp_advanced">
+                <conditional name="doComp">
+                    <param name="compare_selector" value="0"/>
+                    <param name="compFile" value="PE_comp.g1.vs.g2.txt"/>
+                </conditional>
+            </section>
             <!--
-            <conditional name="doComp">
-                <param name="compare_selector" value="1"/>
-            </conditional>
+            <section name="mcomp_advanced">
+                <conditional name="doComp">
+                    <param name="compare_selector" value="1"/>
+                </conditional>
+            </section>
             -->
             <param name="output_selector" value="1,2,3"/>
             <output name="output1" file="PE_dmc_M2_g1.G.bed_vs_g2.G.bed.txt" ftype="interval" lines_diff="1"/>
@@ -443,14 +447,18 @@
                     <param name="fastq_input1" value="TKO2PE2.fastq.gz"/>
                 </conditional>
             </repeat>
-            <conditional name="doComp">
-                <param name="compare_selector" value="0"/>
-                <param name="compFile" value="SE_comp.g1.vs.g2.txt"/>
-            </conditional>
+            <section name="mcomp_advanced">
+                <conditional name="doComp">
+                    <param name="compare_selector" value="0"/>
+                    <param name="compFile" value="SE_comp.g1.vs.g2.txt"/>
+                </conditional>
+            </section>
             <!--
-            <conditional name="doComp">
-                <param name="compare_selector" value="1"/>
-            </conditional>
+            <section name="mcomp_advanced">
+                <conditional name="doComp">
+                    <param name="compare_selector" value="1"/>
+                </conditional>
+            </section>
             -->
             <param name="output_selector" value="1,2,3"/>
             <output name="output1" file="SE_dmc_M2_g1.G.bed_vs_g2.G.bed.txt" ftype="interval" lines_diff="1"/>

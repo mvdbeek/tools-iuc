@@ -210,10 +210,10 @@ write.table(inspect, 'inspect_out.tab', sep="\t", col.names = col.names, row.nam
         <validator type="regex" message="Please only use letters, numbers, or _ - . ,">^[\w\-., ]+$</validator>
     </xml>
     <xml name="valid_cell_name">
-        <validator type="regex" message="Please only use letters, numbers, or punctuation marks">^[\w[:punct:]]+$</validator>
+        <validator type="regex" message="Please only use letters, numbers, or punctuation marks">^[\w\-\.\,\;\:\!\?\@\#\$\%\^\&amp;\*\(\)\+\=\[\]\{\}\/\\\|\`\~\'\&quot;\&lt;\&gt;]+$</validator>
     </xml>
     <xml name="valid_cell_list">
-        <validator type="regex" message="Please only use letters, numbers, or punctuation marks">^[\w[:punct:]]+$</validator>
+        <validator type="regex" message="Please only use letters, numbers, or punctuation marks">^[\w\-\.\,\;\:\!\?\@\#\$\%\^\&amp;\*\(\)\+\=\[\]\{\}\/\\\|\`\~\'\&quot;\&lt;\&gt;]+$</validator>
     </xml>
     <xml name="select_assay">
         <param argument="assay" type="text" optional="true" value="" label="Name of assay to use" help="leave blank to use default assay">
