@@ -1,8 +1,5 @@
 name: Async submission batch test
 on:
-  push:
-    branches:
-      - batch-test-async-submission
   workflow_dispatch:
 env:
   GALAXY_FORK: mvdbeek
