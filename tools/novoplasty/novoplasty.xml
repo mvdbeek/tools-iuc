@@ -253,14 +253,12 @@ Use Quality Scores    = ${optional.use_quality_scores}
                     <param name="genome_range_min" value="12001"/>
                     <param name="genome_range_max" value="20001"/>
                 </conditional>
+                <param name="extend_seed_directly" value="no"/>
+                <param name="kmer" value="40"/>
             </section>
             <section name="read_options">
                 <param name="read_length" value="150"/>
                 <param name="insert_size" value="301"/>
-            </section>
-            <section name="assembly_options">
-                <param name="extend_seed_directly" value="no"/>
-                <param name="kmer" value="40"/>
             </section>
             <section name="optional">
                 <param name="insert_size_auto" value="yes"/>
