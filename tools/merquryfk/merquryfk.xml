@@ -124,15 +124,15 @@
     <tests>
         <!-- Test 1 using standard input with single-phase assembly -->
         <test expect_num_outputs="5">
-            <param name="reads" location="https://zenodo.org/records/15095617/files/reads.ktab"/>
-            <param name="reads_ktab_tar" location="https://zenodo.org/records/15095617/files/reads.tar"/>
-            <param name="reads_hist" location="https://zenodo.org/records/15095617/files/mother.hist"/>
+            <param name="reads" location="https://zenodo.org/records/15095617/files/reads.ktab" ftype="fastk_ktab"/>
+            <param name="reads_ktab_tar" location="https://zenodo.org/records/15095617/files/reads.tar" ftype="fastk_ktab_tar"/>
+            <param name="reads_hist" location="https://zenodo.org/records/15095617/files/mother.hist" ftype="fastk_hist"/>
             <conditional name="analysis">
                 <param name="type" value="default"/>
             </conditional>
             <conditional name="assembly">
                 <param name="phasing" value="individual"/>
-                <param name="asm1" location="https://zenodo.org/records/15095617/files/Hap1.fasta.gz"/>
+                <param name="asm1" location="https://zenodo.org/records/15095617/files/Hap1.fasta.gz" ftype="fasta.gz"/>
             </conditional>
             <param name="width" value="6.0"/>
             <param name="height" value="4.5"/>
@@ -170,16 +170,16 @@
 
         <!-- Test 2 using standard input with dual-phase assembly -->
         <test expect_num_outputs="7">
-            <param name="reads" location="https://zenodo.org/records/15095617/files/reads.ktab"/>
-            <param name="reads_hist" location="https://zenodo.org/records/15095617/files/mother.hist"/>
-            <param name="reads_ktab_tar" location="https://zenodo.org/records/15095617/files/reads.tar"/>
+            <param name="reads" location="https://zenodo.org/records/15095617/files/reads.ktab" ftype="fastk_ktab"/>
+            <param name="reads_hist" location="https://zenodo.org/records/15095617/files/mother.hist" ftype="fastk_hist"/>
+            <param name="reads_ktab_tar" location="https://zenodo.org/records/15095617/files/reads.tar" ftype="fastk_ktab_tar"/>
             <conditional name="analysis">
                 <param name="type" value="default"/>
             </conditional>
             <conditional name="assembly">
                 <param name="phasing" value="phased"/>
-                <param name="asm1" location="https://zenodo.org/records/15095617/files/Hap1.fasta.gz"/>
-                <param name="asm2" location="https://zenodo.org/records/15095617/files/Hap2.fasta.gz"/>
+                <param name="asm1" location="https://zenodo.org/records/15095617/files/Hap1.fasta.gz" ftype="fasta.gz"/>
+                <param name="asm2" location="https://zenodo.org/records/15095617/files/Hap2.fasta.gz" ftype="fasta.gz"/>
             </conditional>
             <param name="width" value="6.0"/>
             <param name="height" value="4.5"/>
@@ -231,22 +231,22 @@
 
         <!-- Test 3 with trio analysis -->
         <test expect_num_outputs="7">
-            <param name="reads" location="https://zenodo.org/records/15095617/files/reads.ktab"/>
-            <param name="reads_hist" location="https://zenodo.org/records/15095617/files/mother.hist"/>
-            <param name="reads_ktab_tar" location="https://zenodo.org/records/15095617/files/reads.tar"/>
+            <param name="reads" location="https://zenodo.org/records/15095617/files/reads.ktab" ftype="fastk_ktab"/>
+            <param name="reads_hist" location="https://zenodo.org/records/15095617/files/mother.hist" ftype="fastk_hist"/>
+            <param name="reads_ktab_tar" location="https://zenodo.org/records/15095617/files/reads.tar" ftype="fastk_ktab_tar"/>
             <conditional name="analysis">
                 <param name="type" value="trio"/>
-                <param name="maternal_reads" location="https://zenodo.org/records/15095617/files/maternal.fastk_ktab"/>
-                <param name="maternal_kmer_tar" location="https://zenodo.org/records/15095617/files/maternal.fastk_ktab_tar"/>
-                <param name="maternal_hap_kmer" location="https://zenodo.org/records/15095617/files/maternal.hap.ktab"/>
-                <param name="paternal_reads" location="https://zenodo.org/records/15095617/files/paternal.fastk_ktab"/>
-                <param name="paternal_kmer_tar" location="https://zenodo.org/records/15095617/files/paternal.fastk_ktab_tar"/>
-                <param name="paternal_hap_kmer" location="https://zenodo.org/records/15095617/files/paternal.hap.ktab"/>
-                <param name="hapmaker_ktabs" location="https://zenodo.org/records/15095617/files/Hapmaker.fastk_ktab_tar"/>
+                <param name="maternal_reads" location="https://zenodo.org/records/15095617/files/maternal.fastk_ktab" ftype="fastk_ktab"/>
+                <param name="maternal_kmer_tar" location="https://zenodo.org/records/15095617/files/maternal.fastk_ktab_tar" ftype="fastk_ktab_tar"/>
+                <param name="maternal_hap_kmer" location="https://zenodo.org/records/15095617/files/maternal.hap.ktab" ftype="fastk_ktab"/>
+                <param name="paternal_reads" location="https://zenodo.org/records/15095617/files/paternal.fastk_ktab" ftype="fastk_ktab"/>
+                <param name="paternal_kmer_tar" location="https://zenodo.org/records/15095617/files/paternal.fastk_ktab_tar" ftype="fastk_ktab_tar"/>
+                <param name="paternal_hap_kmer" location="https://zenodo.org/records/15095617/files/paternal.hap.ktab" ftype="fastk_ktab"/>
+                <param name="hapmaker_ktabs" location="https://zenodo.org/records/15095617/files/Hapmaker.fastk_ktab_tar" ftype="fastk_ktab_tar"/>
             </conditional>
             <conditional name="assembly">
                 <param name="phasing" value="individual"/>
-                <param name="asm1" location="https://zenodo.org/records/15095617/files/Hap1.fasta.gz"/>
+                <param name="asm1" location="https://zenodo.org/records/15095617/files/Hap1.fasta.gz" ftype="fasta.gz"/>
             </conditional>
             <param name="width" value="6.0"/>
             <param name="height" value="4.5"/>
