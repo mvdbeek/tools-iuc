@@ -52,7 +52,6 @@ jobs:
         repos=(
           data_managers/data_manager_liana_resources/data_manager
           tools/allegro
-          tools/amrfinderplus
           tools/bigscape
           tools/biscot
           tools/bwameth
@@ -60,27 +59,22 @@ jobs:
           tools/cnvkit
           tools/coreprofiler
           tools/craq
-          tools/deseq2
           tools/dropletutils
           tools/episcanpy
           tools/fairy
           tools/freebayes
           tools/gatk4
           tools/gemini
-          tools/genrich
           tools/gprofiler
           tools/gubbins
-          tools/gwtc_analysis
           tools/hisat2
           tools/hmmer3
           tools/homer
           tools/humann
           tools/hybpiper
-          tools/macs2
           tools/map_param_value
           tools/meme
           tools/meningotype
-          tools/merquryfk
           tools/metawrapmg
           tools/migmap
           tools/miniprot
