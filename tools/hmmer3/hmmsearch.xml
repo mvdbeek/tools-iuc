@@ -76,6 +76,7 @@ hmmsearch
       <param name="hmmfile" value="fn3.hmm"/>
       <param name="seqdb" value="uniprot_matches.fasta"/>
       <conditional name="repopt">
+        <param name="repopt_sel" value="evalue"/>
         <param name="incE" value="0.00001"/>
         <param name="incdomE" value="0.0001"/>
       </conditional>
