@@ -4,7 +4,7 @@ on:
 env:
   GALAXY_FORK: mvdbeek
   GALAXY_BRANCH: async-submission-parse-fix
-  MAX_CHUNKS: 40
+  MAX_CHUNKS: 20
   CUSTOM_PLANEMO_VERSION: "git+https://github.com/mvdbeek/planemo.git@async-submission"
 jobs:
   setup:
