@@ -107,8 +107,8 @@ python '$__tool_directory__/frameshift_deletions_report_fixer.py' report.tsv '$r
         -->
         <!-- redo alignment from scratch by running MAFFT -->
         <test>
-            <param name="consensus" value="consensus.bcftools.fasta.gz" />
-            <param name="input" value="REF_aln_trim.cram" />
+            <param name="consensus" value="consensus.bcftools.fasta.gz" ftype="fasta.gz" />
+            <param name="input" value="REF_aln_trim.cram" ftype="cram" />
             <conditional name="align_data">
                 <param name="choice" value="mafft" />
             </conditional>
@@ -125,8 +125,8 @@ python '$__tool_directory__/frameshift_deletions_report_fixer.py' report.tsv '$r
         </test>
         <!-- using information in .chain -->
         <test>
-            <param name="consensus" value="consensus.bcftools_nogap.fasta.gz" />
-            <param name="input" value="REF_aln_trim.cram" />
+            <param name="consensus" value="consensus.bcftools_nogap.fasta.gz" ftype="fasta.gz" />
+            <param name="input" value="REF_aln_trim.cram" ftype="cram" />
             <conditional name="align_data">
                 <param name="choice" value="chain" />
                 <param name="chain" value="consensus.bcftools_nogap.chain" />
@@ -144,8 +144,8 @@ python '$__tool_directory__/frameshift_deletions_report_fixer.py' report.tsv '$r
         </test>
         <!-- using information in .chain and consensus marked with gaps (bcftools consensus mark-del '-') -->
         <test>
-            <param name="consensus" value="consensus.bcftools.fasta.gz" />
-            <param name="input" value="REF_aln_trim.cram" />
+            <param name="consensus" value="consensus.bcftools.fasta.gz" ftype="fasta.gz" />
+            <param name="input" value="REF_aln_trim.cram" ftype="cram" />
             <conditional name="align_data">
                 <param name="choice" value="chain" />
                 <param name="chain" value="consensus.bcftools.chain" />
@@ -162,8 +162,8 @@ python '$__tool_directory__/frameshift_deletions_report_fixer.py' report.tsv '$r
             </assert_stderr>
         </test>
         <test>
-            <param name="consensus" value="consensus.bcftools.fasta.gz" />
-            <param name="input" value="REF_aln_trim.cram" />
+            <param name="consensus" value="consensus.bcftools.fasta.gz" ftype="fasta.gz" />
+            <param name="input" value="REF_aln_trim.cram" ftype="cram" />
             <conditional name="align_data">
                 <param name="choice" value="chain" />
                 <param name="chain" value="consensus.bcftools.chain" />
@@ -183,16 +183,16 @@ python '$__tool_directory__/frameshift_deletions_report_fixer.py' report.tsv '$r
             </assert_stderr>
         </test>
         <test>
-            <param name="consensus" value="consensus.bcftools.fasta.gz" />
-            <param name="input" value="REF_aln_trim.cram" />
+            <param name="consensus" value="consensus.bcftools.fasta.gz" ftype="fasta.gz" />
+            <param name="input" value="REF_aln_trim.cram" ftype="cram" />
             <conditional name="align_data">
                 <param name="choice" value="chain" />
                 <param name="chain" value="consensus.bcftools.chain" />
             </conditional>
             <conditional name="ref_data">
                 <param name="choice" value="custom" />
-                <param name="reference" value="NC_045512.2.fasta" />
-                <param name="genes" value="Genes_NC_045512.2.GFF3" />
+                <param name="reference" value="NC_045512.2.fasta" ftype="fasta" />
+                <param name="genes" value="Genes_NC_045512.2.GFF3" ftype="gff3" />
             </conditional>
             <output name="report" value="frameshift_deletions_check.tsv" />
             <assert_command>

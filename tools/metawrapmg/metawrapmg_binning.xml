@@ -39,7 +39,7 @@
         reads_2.fastq
     ]]></command>
     <inputs>
-        <param name="metagenome" format="fasta" type="data" label="Metagenome" help="Metagenome co-assembly for binning"/>
+        <param name="metagenome" format="fasta,fasta.gz" type="data" label="Metagenome" help="Metagenome co-assembly for binning"/>
         <param name="input" type="data_collection" collection_type="paired" label="Reads" help="Original reads that were used for the assembly"/>
     </inputs>
     <outputs>
@@ -56,11 +56,11 @@
     <tests>
         <!-- 01: basic function -->
         <test>
-            <param name="metagenome" value="subset.fasta.gz"/>
+            <param name="metagenome" value="subset.fasta.gz" ftype="fasta.gz"/>
             <param name="input">
                 <collection type="paired">
-                    <element name="forward" value="mapped_reads.r1.fastq.gz"/>
-                    <element name="reverse" value="mapped_reads.r2.fastq.gz"/>
+                    <element name="forward" value="mapped_reads.r1.fastq.gz" ftype="fastqsanger.gz"/>
+                    <element name="reverse" value="mapped_reads.r2.fastq.gz" ftype="fastqsanger.gz"/>
                 </collection>
             </param>
             <output_collection name="concoct_bins" type="list" count="27">

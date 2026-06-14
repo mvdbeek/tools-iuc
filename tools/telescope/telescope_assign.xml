@@ -89,7 +89,7 @@
     </outputs>
     <tests>
         <test>
-            <param name="input_alignment" value="telescope-in1.bam" />
+            <param name="input_alignment" value="telescope-in1.bam" ftype="bam" />
             <param name="input_gtf" value="telescope-in1.gtf" />
             <param name="updated_sam" value="true" />
             <output name="output" file="telescope-out1.tabular" />

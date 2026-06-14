@@ -90,7 +90,7 @@ bwameth.py
                 <option value="indexed">Use a built-in index</option>
             </param>
             <when value="history">
-                <param name="reference" type="data" format="fasta" label="Select a genome" help="in FASTA format"/>
+                <param name="reference" type="data" format="fasta,fasta.gz" label="Select a genome" help="in FASTA format"/>
             </when>
             <when value="indexed">
                 <param name="index" type="select" label="Select a reference genome" help="If your genome of interest is not listed, contact your Galaxy admin">
@@ -130,26 +130,26 @@ bwameth.py
         <test expect_num_outputs="1">
             <conditional name="referenceSource">
                 <param name="source" value="history"/>
-                <param name="reference" value="ref.fa.gz"/>
+                <param name="reference" value="ref.fa.gz" ftype="fasta.gz"/>
             </conditional>
             <conditional name="single_or_paired">
                 <param name="single_or_paired_opts" value="paired"/>
-                <param name="input_mate1" value="t_R1.fastq.gz"/>
-                <param name="input_mate2" value="t_R2.fastq.gz"/>
+                <param name="input_mate1" value="t_R1.fastq.gz" ftype="fastqsanger.gz"/>
+                <param name="input_mate2" value="t_R2.fastq.gz" ftype="fastqsanger.gz"/>
             </conditional>
             <output file="output.bam" ftype="bam" name="output" lines_diff="7"/>
         </test>
         <test expect_num_outputs="1">
             <conditional name="referenceSource">
                 <param name="source" value="history"/>
-                <param name="reference" value="ref.fa.gz"/>
+                <param name="reference" value="ref.fa.gz" ftype="fasta.gz"/>
             </conditional>
             <conditional name="single_or_paired">
                 <param name="single_or_paired_opts" value="paired_collection"/>
                 <param name="input_mate1">
                     <collection type="paired">
-                        <element name="forward" value="t_R1.fastq.gz"/>
-                        <element name="reverse" value="t_R2.fastq.gz"/>
+                        <element name="forward" value="t_R1.fastq.gz" ftype="fastqsanger.gz"/>
+                        <element name="reverse" value="t_R2.fastq.gz" ftype="fastqsanger.gz"/>
                     </collection>
                 </param>
             </conditional>
