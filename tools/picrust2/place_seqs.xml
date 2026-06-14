@@ -31,7 +31,7 @@ place_seqs.py
    </inputs>
    <outputs>
         <expand macro="place_seqs_output" from_work_dir="./">
-            <filter>intermediate_check is True</filter>
+            <filter>intermediate_check</filter>
         </expand>
     </outputs>
     <tests>
@@ -91,7 +91,7 @@ place_seqs.py
             <conditional name="ref_dir">
                 <param name="selector" value="custom"/>
                 <param name="custom_fna" value="img_centroid_16S_aligned_head30.fna.gz"/>
-                <param name="custom_hmm" value="img_centroid_16S_aligned_head30.hmm"/>
+                <param name="custom_hmm" value="img_centroid_16S_aligned_head30.hmm" ftype="hmm3"/>
                 <param name="custom_tre" value="img_centroid_16S_aligned_head30.tre"/>
                 <param name="custom_model" value="img_centroid_16S_aligned_head30.model"/>
             </conditional>
