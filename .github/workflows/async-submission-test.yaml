@@ -77,7 +77,6 @@ jobs:
           tools/humann
           tools/hybpiper
           tools/macs2
-          tools/maker
           tools/map_param_value
           tools/meme
           tools/meningotype
