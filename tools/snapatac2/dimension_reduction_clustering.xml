@@ -362,7 +362,7 @@ snap.tl.aggregate_cells(
             <!-- tl.multi_spectral -->
             <conditional name="method">
                 <param name="method" value="tl.multi_spectral"/>
-                <param name="adata" location="https://zenodo.org/records/17512085/files/snap_datasets_pbmc10k_multiome_RNA.h5ad.gz,https://zenodo.org/records/17512085/files/snap_datasets_pbmc10k_multiome_ATAC.h5ad.gz"/>
+                <param name="adata" location="https://zenodo.org/records/17512085/files/snap_datasets_pbmc10k_multiome_RNA.h5ad.gz,https://zenodo.org/records/17512085/files/snap_datasets_pbmc10k_multiome_ATAC.h5ad.gz" ftype="h5ad"/>
                 <param name="n_comps" value="30"/>
                 <param name="random_state" value="0"/>
                 <param name="weighted_by_sd" value="True"/>
