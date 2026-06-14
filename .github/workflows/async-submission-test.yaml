@@ -88,7 +88,6 @@ jobs:
           tools/quast
           tools/repeatmodeler
           tools/smallgenomeutilities
-          tools/snapatac2
           tools/spapros
           tools/telescope
           tools/varvamp
