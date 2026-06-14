@@ -186,6 +186,9 @@ write.table(output, file='${output}', quote=FALSE, sep='\t', row.names = FALSE, 
     <tests>
         <test>
             <param name="input" ftype="txt" value="example_query.txt" />
+            <section name="tool_settings">
+                <param name="base_url" value="http://biit.cs.ut.ee/gprofiler_archive3/e94_eg41_p11" />
+            </section>
             <output name="output" ftype="tabular" file="example_gost_results.txt" />
         </test>
         <test expect_num_outputs="2">
@@ -217,6 +220,7 @@ write.table(output, file='${output}', quote=FALSE, sep='\t', row.names = FALSE, 
             </section>
 
             <section name="tool_settings">
+                <param name="base_url" value="http://biit.cs.ut.ee/gprofiler_archive3/e94_eg41_p11" />
                 <param name="export_plot" value="T" />
             </section>
 
