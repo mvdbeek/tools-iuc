@@ -50,40 +50,13 @@ jobs:
       id: set-failing-repos
       run: |
         repos=(
-          data_managers/data_manager_bmtagger_index_builder/data_manager
-          data_managers/data_manager_bowtie2_index_builder/data_manager
-          data_managers/data_manager_bowtie_index_builder/data_manager
-          data_managers/data_manager_build_coreprofiler/data_manager
-          data_managers/data_manager_build_staramr/data_manager
-          data_managers/data_manager_bwa_mem2_index_builder/data_manager
-          data_managers/data_manager_bwa_mem_index_builder/data_manager
-          data_managers/data_manager_bwameth_index_builder/data_manager
-          data_managers/data_manager_fetch_genome_dbkeys_all_fasta/data_manager
-          data_managers/data_manager_fetch_plasmidfinder/data_manager
-          data_managers/data_manager_fetch_refseq/data_manager
-          data_managers/data_manager_hisat2_index_builder/data_manager
-          data_managers/data_manager_homer_preparsed/data_manager
           data_managers/data_manager_liana_resources/data_manager
-          data_managers/data_manager_mash_sketch_builder/data_manager
-          data_managers/data_manager_mitos/data_manager
-          data_managers/data_manager_mmseqs2_database/data_manager
-          data_managers/data_manager_mothur_toolsuite/data_manager
-          data_managers/data_manager_pharokka_database_fetcher/data_manager
-          data_managers/data_manager_primer_scheme_bedfiles/data_manager
-          data_managers/data_manager_salmon_index_builder/data_manager
-          data_managers/data_manager_selection_background/data_manager
-          data_managers/data_manager_snpsift_dbnsfp/data_manager
-          data_managers/data_manager_star_index_builder/data_manager
-          data_managers/data_manager_twobit_builder/data_manager
           tools/allegro
           tools/amrfinderplus
-          tools/arriba
-          tools/autobigs
           tools/bigscape
           tools/biscot
           tools/bwameth
           tools/cat
-          tools/chewbbaca
           tools/cialign
           tools/cnvkit
           tools/coreprofiler
@@ -116,24 +89,18 @@ jobs:
           tools/mlst
           tools/mothur
           tools/multigsea
-          tools/ncbi_entrez_direct
           tools/ncbi_entrez_eutils
           tools/novoplasty
           tools/pairtools
           tools/picrust2
           tools/pirate
-          tools/pygenometracks
           tools/quast
           tools/repeatmodeler
-          tools/rgrnastar
-          tools/seaborn
           tools/seurat
           tools/smallgenomeutilities
           tools/snapatac2
           tools/spapros
           tools/spatialdata
-          tools/stacks2
-          tools/table_compute
           tools/telescope
           tools/varvamp
         )
