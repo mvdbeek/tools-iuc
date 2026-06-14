@@ -401,7 +401,7 @@
     <tests>
         <test expect_num_outputs="2">
             <!-- test1:  Inspect General-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/integrated_umap.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/integrated_umap.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Inspect"/>
                 <conditional name="inspect">
@@ -424,7 +424,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test2:  Inspect Cells-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/rawdata.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/rawdata.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Inspect"/>
                 <conditional name="inspect">
@@ -447,7 +447,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test3:  Inspect Features-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/citeseq.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/citeseq.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Inspect"/>
                 <conditional name="inspect">
@@ -471,7 +471,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test4:  Inspect Metadata-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/added_metadata.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/added_metadata.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Inspect"/>
                 <conditional name="inspect">
@@ -495,7 +495,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test5:  Inspect Idents-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/renamed_clusters.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/renamed_clusters.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Inspect"/>
                 <conditional name="inspect">
@@ -518,7 +518,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test6:  Inspect Matrix-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/clusters.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/clusters.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Inspect"/>
                 <conditional name="inspect">
@@ -541,7 +541,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test7:  Change Idents-->
-            <param name="seurat_rds" location="https://zenodo.org/records/17817806/files/clusters.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/17817806/files/clusters.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -565,7 +565,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test8:  Rename Idents-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/clusters.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/clusters.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -596,12 +596,12 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test9:  Add Metadata-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/rawdata.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/rawdata.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
                     <param name="manipulate" value="Add_Metadata"/>
-                    <param name="metadata" location="https://zenodo.org/records/13732784/files/metadata.tsv"/>
+                    <param name="metadata" location="https://zenodo.org/records/13732784/files/metadata.tsv" ftype="tabular"/>
                 </conditional>
             </conditional>
             <section name="advanced_common">
@@ -620,12 +620,12 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test10:  Merge-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/subset_Group_A.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/subset_Group_A.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
                     <param name="manipulate" value="Merge"/>
-                    <param name="add_seurat" location="https://zenodo.org/records/13732784/files/subset_B16.rds,https://zenodo.org/records/13732784/files/subset_B8.rds"/>
+                    <param name="add_seurat" location="https://zenodo.org/records/13732784/files/subset_B16.rds,https://zenodo.org/records/13732784/files/subset_B8.rds" ftype="rds"/>
                 </conditional>
             </conditional>
             <section name="advanced_common">
@@ -644,7 +644,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test11:  Subset Ident-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/clusters.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/clusters.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -668,7 +668,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test12:  Subset Group-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/added_metadata.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/added_metadata.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -693,7 +693,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test13:  DietSeurat-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/integrated_umap.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/integrated_umap.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -718,7 +718,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test14:  AggregateExpression-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/integrated_umap.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/integrated_umap.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -742,7 +742,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test15:  Default Assay-->
-            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/citeseq.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/13732784/files/citeseq.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
@@ -766,7 +766,7 @@
         </test>
         <test expect_num_outputs="2">
             <!-- test16:  Subset Logical -->
-            <param name="seurat_rds" location="https://zenodo.org/records/17817806/files/test_seurat_spatial.rds"/>
+            <param name="seurat_rds" location="https://zenodo.org/records/17817806/files/test_seurat_spatial.rds" ftype="rds"/>
             <conditional name="method">
                 <param name="method" value="Manipulate"/>
                 <conditional name="manipulate">
