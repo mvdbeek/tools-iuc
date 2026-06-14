@@ -157,7 +157,9 @@ coreprofiler allele_calling
             </output>
         </test>     
         <test expect_num_outputs="3"> <!-- TEST_3 multiple files with fasta.gz and fasta files-->
-            <param name="input_file" location="https://zenodo.org/records/16271909/files/10_04A025_hennart2022.fas.gz,https://zenodo.org/records/15854523/files/10_04A025_hennart2022.fas,https://zenodo.org/records/16271909/files/10_04A025_hennart2022.fas.gz" />
+            <param name="input_file" ftype="fasta.gz" location="https://zenodo.org/records/16271909/files/10_04A025_hennart2022.fas.gz" />
+            <param name="input_file" ftype="fasta" location="https://zenodo.org/records/15854523/files/10_04A025_hennart2022.fas" />
+            <param name="input_file" ftype="fasta.gz" location="https://zenodo.org/records/16271909/files/10_04A025_hennart2022.fas.gz" />
             <param name="input_scheme" value="coreprofiler_downloaded_20250625_klebsiella_3_scgMLST634_632_loci_bigsdb" />
             <section name="autotag_section">
                 <param name="autotag_word_size" value="31" />

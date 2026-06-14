@@ -240,6 +240,9 @@
         <test expect_num_outputs="5">
             <param name="pfam_dir" value="Pfam-A.hmm" ftype="hmm3"/>
             <param name="inputdir" value="NC_010530.1.region005.gbk,NC_012963.1.region001.gbk,NW_009799099.1.region003.gbk,NW_021940918.1.region003.gbk,NW_009799102.1.region001.gbk,NW_022985561.1.region002.gbk,NW_022985549.1.region005.gbk,NW_022985575.1.region001.gbk" ftype="genbank" />
+            <repeat name="cutoff">
+                <param name="cutoffs" value="0.3"/>
+            </repeat>
         </test>
         <test expect_num_outputs="6">
             <param name="pfam_dir" value="Pfam-A.hmm" ftype="hmm3"/>
@@ -299,12 +302,18 @@
             <param name="inputdir" value="NC_012963.1.region001.no-genbank-suffix,NC_010530.1.region005.gbk,NC_012963.1.region001.gbk,NW_009799099.1.region003.gbk,NW_021940918.1.region003.gbk,NW_009799102.1.region001.gbk,NW_022985561.1.region002.gbk,NW_022985549.1.region005.gbk,NW_022985575.1.region001.gbk" ftype="genbank" />
             <param name="log" value="true" />
             <param name="clans_off" value="true" />
+            <repeat name="cutoff">
+                <param name="cutoffs" value="0.3"/>
+            </repeat>
         </test>
         <test expect_num_outputs="5">
             <param name="pfam_dir" value="Pfam-A.hmm" ftype="hmm3"/>
             <param name="inputdir" value="NC_012963.1.region001.no-genbank-suffix,NC_010530.1.region005.gbk" ftype="genbank" />
             <param name="log" value="true" />
             <param name="clans_off" value="true" />
+            <repeat name="cutoff">
+                <param name="cutoffs" value="0.3"/>
+            </repeat>
         </test>
     </tests>
     <help> 

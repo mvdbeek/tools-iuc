@@ -242,12 +242,14 @@ UNINFORMATIVE
         <test>
             <expand macro="macro_inputs" />
             <conditional name="cond_haplotypes">
+                <param name="opt_haplotypes" value="no" />
                 <section name="section_linkage">
                     <param name="extra_linkage_mptspt" value="mpt" />
                     <conditional name="cond_linktype" >
                         <param name="extra_linkage_type" value="classical" />
                     </conditional>
                     <conditional name="cond_steps" >
+                        <param name="extra_steps_type" value="STEPS" />
                         <param name="extra_steps" value="3" />
                     </conditional>
                 </section>
@@ -262,6 +264,7 @@ UNINFORMATIVE
         <test>
             <expand macro="macro_inputs" />
             <conditional name="cond_haplotypes">
+                <param name="opt_haplotypes" value="no" />
                 <section name="section_linkage">
                     <param name="extra_linkage_mptspt" value="spt" />
                     <conditional name="cond_linktype" >

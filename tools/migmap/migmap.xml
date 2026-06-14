@@ -111,7 +111,7 @@ migmap
         <test>
             <param name="allow_noncoding" value="true"/>
             <param name="by_read" value="true"/>
-            <param name="input" value="test_out_of_frame.fa"/>
+            <param name="input" value="test_out_of_frame.fa" ftype="fasta"/>
             <output name="output" file="test_out_of_frame.out"/>
         </test>
     </tests>
