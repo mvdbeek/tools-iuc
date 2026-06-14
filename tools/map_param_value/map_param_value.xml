@@ -363,7 +363,7 @@ return { output: coerceToOutput(source) };
                 <param name="default_value" value="true"/>
             </conditional>
             <param name="output_param_type" value="boolean"/>
-            <output name="output_param_text" value_json="false" />
+            <output name="output_param_boolean" value_json="false" />
         </test>
         <test expect_num_outputs="1">
             <conditional name="input_param_type">
@@ -378,7 +378,7 @@ return { output: coerceToOutput(source) };
                 <param name="default_value" value="true"/>
             </conditional>
             <param name="output_param_type" value="boolean"/>
-            <output name="output_param_text" value_json="true" />
+            <output name="output_param_boolean" value_json="true" />
         </test>
         <!-- another test checking of two datasets are the same -->
         <test expect_num_outputs="1">
@@ -391,7 +391,7 @@ return { output: coerceToOutput(source) };
                 </repeat>
             </conditional>
             <param name="output_param_type" value="boolean"/>
-            <output name="output_param_text" value_json="true" />
+            <output name="output_param_boolean" value_json="true" />
         </test>
     </tests>
     <help><![CDATA[
