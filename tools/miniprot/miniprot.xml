@@ -400,6 +400,7 @@
             <param name="output_format" value="gff"></param>
             <section name="splice">
                 <param name="spsc_file" value="spsc.tsv" ftype="tsv"></param>
+                <param name="spsc0" value="-7"></param>
             </section>
             <conditional name="adv">
                 <param name="options" value="yes"/>

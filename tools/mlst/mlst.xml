@@ -44,9 +44,14 @@
                 #if str($settings.scheme_condition.exclude)
                     --exclude '${settings.scheme_condition.exclude}'
                 #end if
-            #elif str($settings.scheme_condition.set_scheme) == "list" or str($settings.scheme_condition.set_scheme) == "manual"
+            #elif str($settings.scheme_condition.set_scheme) == "list"
                 #if str($settings.scheme_condition.scheme)
                     --scheme='${settings.scheme_condition.scheme}'
+                #end if
+                $settings.scheme_condition.legacy
+            #elif str($settings.scheme_condition.set_scheme) == "manual"
+                #if str($settings.scheme_condition.scheme_manual)
+                    --scheme='${settings.scheme_condition.scheme_manual}'
                 #end if
                 $settings.scheme_condition.legacy
             #end if
@@ -228,7 +233,7 @@
                         <expand macro="legacy_param" />
                     </when>
                     <when value="manual">
-                        <param name="scheme" type="text" area="false" label="MLST Scheme (manual)" help="Enter a MLST scheme to use (see output of 'MLST List' tool for a list of available schemes)" />
+                        <param name="scheme_manual" argument="--scheme" type="text" area="false" label="MLST Scheme (manual)" help="Enter a MLST scheme to use (see output of 'MLST List' tool for a list of available schemes)" />
                         <expand macro="legacy_param" />
                     </when>
                 </conditional>
@@ -289,7 +294,7 @@
                 <param name="advanced" value="advanced"/>
                 <conditional name="scheme_condition">
                     <param name="set_scheme" value="manual"/>
-                    <param name="scheme" value="saureus"/>
+                    <param name="scheme_manual" value="saureus"/>
                     <param name="legacy" value="true"/>
                 </conditional>
             </conditional>
@@ -332,7 +337,7 @@
                 <param name="novel" value="true"/>
                 <conditional name="scheme_condition">
                     <param name="set_scheme" value="manual"/>
-                    <param name="scheme" value="saureus"/>
+                    <param name="scheme_manual" value="saureus"/>
                 </conditional>
             </conditional>
             <output name="report" ftype="tabular" file="output_mrsa_novel.txt"/>

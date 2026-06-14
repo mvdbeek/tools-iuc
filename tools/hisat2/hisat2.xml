@@ -308,8 +308,8 @@ hisat2
     #end if
     #if str($adv.sam_options.read_groups.rg_labels) == "Yes":
         --rg-id '$adv.sam_options.read_groups.rg_id'
-        #if len('$adv.sam_options.read_groups.read_groups'):
-            #for $i, $id in enumerate($adv.sam_options.read_groups.read_groups):
+        #if len('$adv.sam_options.read_groups.rg_tags'):
+            #for $i, $id in enumerate($adv.sam_options.read_groups.rg_tags):
                 --rg '$id.rg'
             #end for
         #end if
@@ -570,9 +570,9 @@ hisat2
                         <when value="No"/>
                         <when value="Yes">
                             <param name="rg_id" argument="--rg-id" type="text" value="read_group" label="Read Group ID" help="Set the read group ID to the value set here. This causes the SAM @RG header line to be printed, with this input value as the value associated with the ID: tag. It also causes the RG:Z: extra field to be attached to each SAM output record, with value set to the value set here." /> 
-                            <repeat name="read_groups" title="Read Groups text">
-                                <param name="rg" argument="--rg" type="text" optional="true" label="Read Group text" help="Add specified text (usually of the form TAG:VAL, e.g. SM:Pool1) as a field on the @RG header line. Note: in order for the @RG line to appear, Read Group ID must also be specified. This is because the ID tag is required by the SAM Spec. Specify --rg multiple times to set multiple fields. See the SAM Spec for details about what fields are legal." /> 
-                            </repeat>               
+                            <repeat name="rg_tags" title="Read Groups text">
+                                <param name="rg" argument="--rg" type="text" optional="true" label="Read Group text" help="Add specified text (usually of the form TAG:VAL, e.g. SM:Pool1) as a field on the @RG header line. Note: in order for the @RG line to appear, Read Group ID must also be specified. This is because the ID tag is required by the SAM Spec. Specify --rg multiple times to set multiple fields. See the SAM Spec for details about what fields are legal." />
+                            </repeat>
                         </when>
                     </conditional>
                     <param name="chr_text" type="select" label="Add/remove 'chr' from reference names in alignment files">
@@ -1037,10 +1037,10 @@ hisat2
             <param name="adv|sam_options|sam_options_selector" value="advanced"/>
             <param name="adv|sam_options|no_unal" value="true"/>
             <param name="adv|sam_options|read_groups|rg_labels" value="Yes"/>
-            <repeat name="adv|sam_options|read_groups|read_groups">
+            <repeat name="adv|sam_options|read_groups|rg_tags">
                 <param name="rg" value="BC:test1"/>
             </repeat>
-            <repeat name="adv|sam_options|read_groups|read_groups">
+            <repeat name="adv|sam_options|read_groups|rg_tags">
                 <param name="rg" value="CN:test2"/>
             </repeat>
             <param name="adv|sam_options|chr_text" value="--add-chrname"/>
