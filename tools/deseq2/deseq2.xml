@@ -496,6 +496,9 @@ Rscript '${__tool_directory__}/deseq2.R'
             <section name="advanced_options">
                 <param name="use_beta_priors" value="1"/>
             </section>
+            <section name="output_options">
+                <param name="output_selector" value_json="[]"/>
+            </section>
             <conditional name="tximport">
                 <param name="tximport_selector" value="tximport"/>
                 <param name="txtype" value="sailfish"/>
@@ -529,6 +532,9 @@ Rscript '${__tool_directory__}/deseq2.R'
             <section name="advanced_options">
                 <param name="use_beta_priors" value="1"/>
             </section>
+            <section name="output_options">
+                <param name="output_selector" value_json="[]"/>
+            </section>
             <conditional name="tximport">
                 <param name="tximport_selector" value="tximport"/>
                 <param name="txtype" value="sailfish"/>
@@ -561,6 +567,9 @@ Rscript '${__tool_directory__}/deseq2.R'
             </conditional>
             <section name="advanced_options">
                 <param name="use_beta_priors" value="1"/>
+            </section>
+            <section name="output_options">
+                <param name="output_selector" value_json="[]"/>
             </section>
             <conditional name="tximport">
                 <param name="tximport_selector" value="tximport"/>
@@ -604,6 +613,9 @@ Rscript '${__tool_directory__}/deseq2.R'
             </conditional>
             <section name="advanced_options">
                 <param name="use_beta_priors" value="1"/>
+            </section>
+            <section name="output_options">
+                <param name="output_selector" value_json="[]"/>
             </section>
             <conditional name="tximport">
                 <param name="tximport_selector" value="tximport"/>
@@ -687,6 +699,7 @@ Rscript '${__tool_directory__}/deseq2.R'
                 <param name="use_beta_priors" value="1"/>
             </section>
             <section name="output_options">
+                <param name="output_selector" value_json="[]"/>
                 <param name="alpha_ma" value="0.05"/>
             </section>
             <conditional name="tximport">
@@ -762,6 +775,7 @@ Rscript '${__tool_directory__}/deseq2.R'
                 </conditional>
             </section>
             <section name="output_options">
+                <param name="output_selector" value_json="[]"/>
                 <param name="alpha_ma" value="0.05"/>
             </section>
             <conditional name="tximport">
