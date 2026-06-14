@@ -246,6 +246,7 @@ Use Quality Scores    = ${optional.use_quality_scores}
             <conditional name="reference_cond">
                 <param name="use_reference" value="true"/>
                 <param name="reference" value="reference.fasta.gz"/>
+                <param name="variance_detection" value="false"/>
             </conditional>
             <section name="assembly_options">
                 <conditional name="type_cond">

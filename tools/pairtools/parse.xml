@@ -113,7 +113,7 @@
         </test>
         <!--Test 03 with BAM file as input and default parameters-->
         <test expect_num_outputs="1">
-            <param name="sam_path" value="test.bam"/>
+            <param name="sam_path" value="test.bam" ftype="qname_input_sorted.bam"/>
             <param name="chroms_path" value="test.reduced.chrom.sizes"/>
             <param name="min_mapq" value="1"/>
             <param name="walks_policy" value="mask"/>
@@ -123,7 +123,7 @@
         </test>
         <!--Test 04 with BAM file as input and minimal mapq of 40-->
         <test expect_num_outputs="1">
-            <param name="sam_path" value="test.bam"/>
+            <param name="sam_path" value="test.bam" ftype="qname_input_sorted.bam"/>
             <param name="chroms_path" value="test.reduced.chrom.sizes"/>
             <param name="min_mapq" value="40"/>
             <param name="walks_policy" value="mask"/>
@@ -133,7 +133,7 @@
         </test>
         <!--Test 05 with BAM file as input and walk policy of 5unique-->
         <test expect_num_outputs="1">
-            <param name="sam_path" value="test.bam"/>
+            <param name="sam_path" value="test.bam" ftype="qname_input_sorted.bam"/>
             <param name="chroms_path" value="test.reduced.chrom.sizes"/>
             <param name="min_mapq" value="40"/>
             <param name="walks_policy" value="5unique"/>
@@ -143,7 +143,7 @@
         </test>
         <!--Test 06 with BAM file as input and read id dropped-->
         <test expect_num_outputs="1">
-            <param name="sam_path" value="test.bam"/>
+            <param name="sam_path" value="test.bam" ftype="qname_input_sorted.bam"/>
             <param name="chroms_path" value="test.reduced.chrom.sizes"/>
             <param name="min_mapq" value="40"/>
             <param name="walks_policy" value="5unique"/>
