@@ -57,7 +57,6 @@ jobs:
           tools/biscot
           tools/bwameth
           tools/cat
-          tools/cialign
           tools/cnvkit
           tools/coreprofiler
           tools/craq
@@ -93,14 +92,11 @@ jobs:
           tools/novoplasty
           tools/pairtools
           tools/picrust2
-          tools/pirate
           tools/quast
           tools/repeatmodeler
-          tools/seurat
           tools/smallgenomeutilities
           tools/snapatac2
           tools/spapros
-          tools/spatialdata
           tools/telescope
           tools/varvamp
         )
