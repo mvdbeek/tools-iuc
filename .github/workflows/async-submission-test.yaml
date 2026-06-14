@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       galaxy-head-sha: ${{ steps.get-galaxy-sha.outputs.galaxy-head-sha }}
-      repository-list: ${{ steps.discover.outputs.repository-list }}
-      chunk-count: ${{ steps.discover.outputs.chunk-count }}
-      chunk-list: ${{ steps.discover.outputs.chunk-list }}
+      repository-list: ${{ steps.set-failing-repos.outputs.repository-list }}
+      chunk-count: ${{ steps.set-failing-repos.outputs.chunk-count }}
+      chunk-list: ${{ steps.set-failing-repos.outputs.chunk-list }}
     strategy:
       matrix:
         python-version: ['3.11']
@@ -46,11 +46,114 @@ jobs:
         galaxy-branch: ${{ env.GALAXY_BRANCH }}
         max-chunks: ${{ env.MAX_CHUNKS }}
         python-version: ${{ matrix.python-version }}
+    - name: Set failing repository list
+      id: set-failing-repos
+      run: |
+        repos=(
+          data_managers/data_manager_bmtagger_index_builder
+          data_managers/data_manager_bowtie2_index_builder
+          data_managers/data_manager_bowtie_index_builder
+          data_managers/data_manager_build_coreprofiler
+          data_managers/data_manager_build_staramr
+          data_managers/data_manager_bwa_mem2_index_builder
+          data_managers/data_manager_bwa_mem_index_builder
+          data_managers/data_manager_bwameth_index_builder
+          data_managers/data_manager_fetch_genome_dbkeys_all_fasta
+          data_managers/data_manager_fetch_plasmidfinder
+          data_managers/data_manager_fetch_refseq
+          data_managers/data_manager_hisat2_index_builder
+          data_managers/data_manager_homer_preparsed
+          data_managers/data_manager_liana_resources
+          data_managers/data_manager_mash_sketch_builder
+          data_managers/data_manager_mitos
+          data_managers/data_manager_mmseqs2_database
+          data_managers/data_manager_mothur_toolsuite
+          data_managers/data_manager_pharokka_database_fetcher
+          data_managers/data_manager_primer_scheme_bedfiles
+          data_managers/data_manager_salmon_index_builder
+          data_managers/data_manager_selection_background
+          data_managers/data_manager_snpsift_dbnsfp
+          data_managers/data_manager_star_index_builder
+          data_managers/data_manager_twobit_builder
+          tool_collections/snpsift/snpsift
+          tools/allegro
+          tools/amrfinderplus
+          tools/arriba
+          tools/autobigs
+          tools/bigscape
+          tools/biscot
+          tools/bwameth
+          tools/cat
+          tools/chewbbaca
+          tools/cialign
+          tools/cnvkit
+          tools/coreprofiler
+          tools/craq
+          tools/cutadapt
+          tools/deseq2
+          tools/dropletutils
+          tools/episcanpy
+          tools/fairy
+          tools/freebayes
+          tools/gatk4
+          tools/gemini
+          tools/genrich
+          tools/gprofiler
+          tools/gubbins
+          tools/gwtc_analysis
+          tools/hisat2
+          tools/hmmer3
+          tools/homer
+          tools/humann
+          tools/hybpiper
+          tools/macs2
+          tools/maker
+          tools/map_param_value
+          tools/meme
+          tools/meningotype
+          tools/merquryfk
+          tools/metawrapmg
+          tools/migmap
+          tools/miniprot
+          tools/mlst
+          tools/mothur
+          tools/multigsea
+          tools/ncbi_entrez_direct
+          tools/ncbi_entrez_eutils
+          tools/novoplasty
+          tools/pairtools
+          tools/picrust2
+          tools/pirate
+          tools/pygenometracks
+          tools/quast
+          tools/repeatmodeler
+          tools/rgrnastar
+          tools/seaborn
+          tools/seurat
+          tools/smallgenomeutilities
+          tools/snapatac2
+          tools/spapros
+          tools/spatialdata
+          tools/stacks2
+          tools/table_compute
+          tools/telescope
+          tools/varvamp
+        )
+        printf "%s\n" "${repos[@]}" > repo_list.txt
+        echo "repository-list<<EOF" >> $GITHUB_OUTPUT
+        cat repo_list.txt >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        count=${#repos[@]}
+        max=${{ env.MAX_CHUNKS }}
+        chunk_count=$(( count < max ? count : max ))
+        echo "chunk-count=$chunk_count" >> $GITHUB_OUTPUT
+        chunk_list=$(python3 -c "import json; print(json.dumps(list(range($chunk_count))))")
+        echo "chunk-list=$chunk_list" >> $GITHUB_OUTPUT
     - name: Show repository list
-      run: echo '${{ steps.discover.outputs.repository-list }}'
+      run: cat repo_list.txt
     - name: Show chunks
       run: |
-        echo 'Using ${{ steps.discover.outputs.chunk-count }} chunks (${{ steps.discover.outputs.chunk-list }})'
+        echo 'Using ${{ steps.set-failing-repos.outputs.chunk-count }} chunks (${{ steps.set-failing-repos.outputs.chunk-list }})'
 
   test:
     name: Test tools
