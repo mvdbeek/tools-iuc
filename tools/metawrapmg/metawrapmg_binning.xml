@@ -39,7 +39,7 @@
         reads_2.fastq
     ]]></command>
     <inputs>
-        <param name="metagenome" format="fasta,fasta.gz" type="data" label="Metagenome" help="Metagenome co-assembly for binning"/>
+        <param name="metagenome" format="fasta" type="data" label="Metagenome" help="Metagenome co-assembly for binning"/>
         <param name="input" type="data_collection" collection_type="paired" label="Reads" help="Original reads that were used for the assembly"/>
     </inputs>
     <outputs>

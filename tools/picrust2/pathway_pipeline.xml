@@ -83,6 +83,7 @@ true
             <conditional name="regrouping">
                 <param name="no_regroup" value=""/>
             </conditional>
+            <param name="intermediate_check" value="false"/>
             <conditional name="strat_output">
                 <param name="per_sequence_contrib" value="--per_sequence_contrib"/>
                 <param name="wide_table" value="false"/>

@@ -779,12 +779,6 @@ metaquast
         </test>
         <!-- Test 06: FASTQ.gz read files -->
         <test expect_num_outputs="1">
-            <conditional name="assembly">
-                <param name="type" value="genome"/>
-                <conditional name="ref">
-                    <param name="use_ref" value="false"/>
-                </conditional>
-            </conditional>
             <conditional name="mode">
                 <param name="mode" value="co"/>
                 <conditional name="in">
@@ -808,12 +802,6 @@ metaquast
         </test>
         <!-- Test 07: FASTA.gz read files -->
         <test expect_num_outputs="1">
-            <conditional name="assembly">
-                <param name="type" value="genome"/>
-                <conditional name="ref">
-                    <param name="use_ref" value="false"/>
-                </conditional>
-            </conditional>
             <conditional name="mode">
                 <param name="mode" value="co"/>
                 <conditional name="in">

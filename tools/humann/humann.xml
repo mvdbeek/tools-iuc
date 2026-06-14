@@ -817,9 +817,6 @@ humann
                 <param name="selector" value="abundance"/>
                 <param name="input" value="demo_genefamilies.tsv"/>
             </conditional>
-            <conditional name="wf">
-                <param name="selector" value="none"/>
-            </conditional>
             <output name="pathcoverage_tsv" ftype="tabular">
                 <assert_contents>
                     <has_text text="UNMAPPED"/>

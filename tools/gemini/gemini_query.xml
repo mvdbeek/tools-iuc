@@ -383,9 +383,6 @@
                     <conditional name="report">
                         <param name="format" value="maf" />
                         <param name="tumor_sample_id" value="test" />
-                        <conditional name="mutation_status">
-                            <param name="status_select" value="Somatic" />
-                        </conditional>
                     </conditional>
                 </section>
             </conditional>

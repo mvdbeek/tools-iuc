@@ -103,9 +103,9 @@
         </param>
         <param name="databases" type="select" multiple="true" optional="false" label="Pathway databases" help="Available pathway databases">
             <option value="kegg" selected="true">KEGG</option>
-            <option value="reactome">REACTOME</option>
-	        <option value="wikipathways">WIKIPATHWAYS</option>
-	        <option value="pathbank">PATHBANK</option>
+            <option value="reactome" selected="true">REACTOME</option>
+	        <option value="wikipathways" selected="true">WIKIPATHWAYS</option>
+	        <option value="pathbank" selected="true">PATHBANK</option>
 	        <option value="smpdb">SMPDB (Human only)</option>
 	        <option value="panther">PANTHER (Human only)</option>
 	        <option value="pharmgkb">PHARMGKB (Human only)</option>

@@ -63,7 +63,7 @@ adata = esc.read('anndata.h5ad')
     </token>
     <xml name="inputs_common_advanced">
         <section name="advanced_common" title="Advanced Options" expanded="false">
-            <param name="show_log" type="boolean" checked="false" label="Output Log?" />
+            <param name="show_log" type="boolean" truevalue="true" falsevalue="" checked="false" label="Output Log?" />
         </section>
     </xml>
     <xml name="anndata_outputs">

@@ -300,7 +300,7 @@
             <conditional name="CNV_reference">
                 <param name="CNV_reference_availabel" value="yes" />
                 <param name="input_sample_file" ftype="bam" value="tumor.bam" />
-                <param name="reference" ftype="tabular" value="reference.cnn" />
+                <param name="reference" ftype="cnn" value="reference.cnn" />
             </conditional>
             <section name="output_section">
                 <param name="scatter" value="1"/>

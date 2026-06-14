@@ -4,7 +4,7 @@ on:
 env:
   GALAXY_FORK: mvdbeek
   GALAXY_BRANCH: async-submission-parse-fix
-  MAX_CHUNKS: 7
+  MAX_CHUNKS: 25
   CUSTOM_PLANEMO_VERSION: "git+https://github.com/mvdbeek/planemo.git@async-submission"
 jobs:
   setup:
@@ -50,13 +50,31 @@ jobs:
       id: set-failing-repos
       run: |
         repos=(
+          tools/allegro
+          tools/biscot
+          tools/bwameth
           tools/cnvkit
+          tools/deseq2
           tools/dropletutils
           tools/episcanpy
           tools/fairy
+          tools/gatk4
+          tools/gemini
           tools/gubbins
+          tools/hisat2
+          tools/humann
+          tools/hybpiper
+          tools/meningotype
+          tools/metawrapmg
+          tools/mlst
+          tools/multigsea
           tools/ncbi_entrez_eutils
+          tools/novoplasty
+          tools/picrust2
+          tools/quast
+          tools/repeatmodeler
           tools/spapros
+          tools/varvamp
         )
         printf "%s\n" "${repos[@]}" > repo_list.txt
         echo "repository-list<<EOF" >> $GITHUB_OUTPUT

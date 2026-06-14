@@ -165,7 +165,7 @@
                     <option value="gene" selected="true">Gene</option>
                     <option value="supercontig">Supercontig</option>
                 </param>
-                <param name="heatmap" type="boolean" truevalue="true" falsevalue="" checked="false" label="Produce a heatmap for each of the selected statistics" />
+                <param name="heatmap" type="boolean" checked="false" label="Produce a heatmap for each of the selected statistics" />
                 <param name="sequence_type_select" type="select" display="checkboxes" label="Choose sequences to extract" multiple="true" optional="true">
                     <option value="dna" selected="true">DNA</option>
                     <option value="aa">Amino acid</option>
@@ -213,7 +213,7 @@
         <!-- stats/heatmap output -->
         <collection name="hybpiper_heatmaps" type="list" label="Hybpiper heatmaps">
             <discover_datasets pattern="heatmap\.(?P&lt;designation&gt;.+)\.svg" format="svg" recurse="false" />
-            <filter>job_conditional['hybpiper_job'] == 'stats' and job_conditional['heatmap']</filter>            
+            <filter>job_conditional['hybpiper_job'] == 'stats' and job_conditional['heatmap'] and job_conditional['heatmap'] is true</filter>
         </collection>
 
         <!-- stats/sequences output -->         
@@ -313,8 +313,6 @@
                 </collection>
             </param>
             <param name="heatmap" value="true"/>
-            <param name="stats_type_select" value_json="[]"/>
-            <param name="sequence_type_select" value_json="[]"/>
         </conditional>
     </test>
 
