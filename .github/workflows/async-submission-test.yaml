@@ -54,21 +54,14 @@ jobs:
           tools/biscot
           tools/bwameth
           tools/cnvkit
-          tools/deseq2
           tools/dropletutils
-          tools/episcanpy
-          tools/fairy
           tools/gatk4
-          tools/gemini
-          tools/gubbins
           tools/hisat2
           tools/humann
           tools/hybpiper
           tools/meningotype
           tools/metawrapmg
-          tools/mlst
           tools/multigsea
-          tools/novoplasty
           tools/picrust2
           tools/quast
           tools/repeatmodeler
