@@ -68,7 +68,6 @@ jobs:
           tools/metawrapmg
           tools/mlst
           tools/multigsea
-          tools/ncbi_entrez_eutils
           tools/novoplasty
           tools/picrust2
           tools/quast
