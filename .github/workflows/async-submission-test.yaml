@@ -1,0 +1,187 @@
+name: Async submission batch test
+on:
+  workflow_dispatch:
+env:
+  GALAXY_FORK: mvdbeek
+  GALAXY_BRANCH: async-submission-parse-fix
+  MAX_CHUNKS: 25
+  CUSTOM_PLANEMO_VERSION: "git+https://github.com/mvdbeek/planemo.git@async-submission"
+jobs:
+  setup:
+    name: Setup cache and determine changed repositories
+    runs-on: ubuntu-latest
+    outputs:
+      galaxy-head-sha: ${{ steps.get-galaxy-sha.outputs.galaxy-head-sha }}
+      repository-list: ${{ steps.set-failing-repos.outputs.repository-list }}
+      chunk-count: ${{ steps.set-failing-repos.outputs.chunk-count }}
+      chunk-list: ${{ steps.set-failing-repos.outputs.chunk-list }}
+    strategy:
+      matrix:
+        python-version: ['3.11']
+    steps:
+    - name: Determine latest commit in the Galaxy repo
+      id: get-galaxy-sha
+      run: echo "galaxy-head-sha=$(git ls-remote https://github.com/${{ env.GALAXY_FORK }}/galaxy refs/heads/${{ env.GALAXY_BRANCH }} | cut -f1)" >> $GITHUB_OUTPUT
+    - uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Cache .cache/pip
+      uses: actions/cache@v5
+      id: cache-pip
+      with:
+        path: ~/.cache/pip
+        key: pip_cache_py_${{ matrix.python-version }}_gxy_${{ steps.get-galaxy-sha.outputs.galaxy-head-sha }}
+    - name: Install wheel
+      run: pip install wheel
+    - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+    - name: Fake a Planemo run to update cache and determine repositories and chunks
+      uses: galaxyproject/planemo-ci-action@v1
+      id: discover
+      with:
+        create-cache: ${{ steps.cache-pip.outputs.cache-hit != 'true' }}
+        planemo-version: ${{ env.CUSTOM_PLANEMO_VERSION }}
+        galaxy-fork: ${{ env.GALAXY_FORK }}
+        galaxy-branch: ${{ env.GALAXY_BRANCH }}
+        max-chunks: ${{ env.MAX_CHUNKS }}
+        python-version: ${{ matrix.python-version }}
+    - name: Set failing repository list
+      id: set-failing-repos
+      run: |
+        repos=(
+          tools/allegro
+          tools/biscot
+          tools/bwameth
+          tools/cnvkit
+          tools/deseq2
+          tools/dropletutils
+          tools/episcanpy
+          tools/fairy
+          tools/gatk4
+          tools/gemini
+          tools/gubbins
+          tools/hisat2
+          tools/humann
+          tools/hybpiper
+          tools/meningotype
+          tools/metawrapmg
+          tools/mlst
+          tools/multigsea
+          tools/novoplasty
+          tools/picrust2
+          tools/quast
+          tools/repeatmodeler
+          tools/spapros
+          tools/varvamp
+        )
+        printf "%s\n" "${repos[@]}" > repo_list.txt
+        echo "repository-list<<EOF" >> $GITHUB_OUTPUT
+        cat repo_list.txt >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        count=${#repos[@]}
+        max=${{ env.MAX_CHUNKS }}
+        chunk_count=$(( count < max ? count : max ))
+        echo "chunk-count=$chunk_count" >> $GITHUB_OUTPUT
+        chunk_list=$(python3 -c "import json; print(json.dumps(list(range($chunk_count))))")
+        echo "chunk-list=$chunk_list" >> $GITHUB_OUTPUT
+    - name: Show repository list
+      run: cat repo_list.txt
+    - name: Show chunks
+      run: |
+        echo 'Using ${{ steps.set-failing-repos.outputs.chunk-count }} chunks (${{ steps.set-failing-repos.outputs.chunk-list }})'
+
+  test:
+    name: Test tools
+    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ needs.setup.outputs.repository-list != '' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.setup.outputs.chunk-list) }}
+        python-version: ['3.11']
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Cache .cache/pip
+      uses: actions/cache@v5
+      id: cache-pip
+      with:
+        path: ~/.cache/pip
+        key: pip_cache_py_${{ matrix.python-version }}_gxy_${{ needs.setup.outputs.galaxy-head-sha }}
+    - name: Get number of CPU cores
+      uses: SimenB/github-actions-cpu-cores@v3
+      id: cpu-cores
+    - name: Clean dotnet folder for space
+      run: rm -Rf /usr/share/dotnet
+    - name: Planemo test
+      uses: galaxyproject/planemo-ci-action@v1
+      id: test
+      with:
+        mode: test
+        planemo-version: ${{ env.CUSTOM_PLANEMO_VERSION }}
+        repository-list: ${{ needs.setup.outputs.repository-list }}
+        galaxy-fork: ${{ env.GALAXY_FORK }}
+        galaxy-branch: ${{ env.GALAXY_BRANCH }}
+        chunk: ${{ matrix.chunk }}
+        chunk-count: ${{ needs.setup.outputs.chunk-count }}
+        galaxy-slots: ${{ steps.cpu-cores.outputs.count }}
+        test_timeout: 900
+        additional-planemo-options: "--biocontainers"
+    - uses: actions/upload-artifact@v7
+      with:
+        name: 'Tool test output ${{ matrix.chunk }}'
+        path: upload
+
+  combine_outputs:
+    name: Combine chunked test results
+    needs: [setup, test]
+    if: ${{ always() && needs.setup.outputs.repository-list != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+    steps:
+    - uses: actions/download-artifact@v8
+      with:
+        path: artifacts
+    - uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Cache .cache/pip
+      uses: actions/cache@v5
+      id: cache-pip
+      with:
+        path: ~/.cache/pip
+        key: pip_cache_py_${{ matrix.python-version }}_gxy_${{ needs.setup.outputs.galaxy-head-sha }}
+    - name: Combine outputs
+      uses: galaxyproject/planemo-ci-action@v1
+      id: combine
+      with:
+        mode: combine
+        html-report: true
+        markdown-report: true
+    - uses: actions/upload-artifact@v7
+      with:
+        name: 'All tool test results'
+        path: upload
+    - run: cat upload/tool_test_output.md >> $GITHUB_STEP_SUMMARY
+    - name: Check outputs
+      uses: galaxyproject/planemo-ci-action@v1
+      id: check
+      with:
+        mode: check
