@@ -253,3 +253,38 @@ hsp.xml tests.
 - **Real tool/runtime/nondeterminism:** allegro (segfault), hybpiper (targetfile),
   cnvkit, metawrapmg, varvamp, episcanpy, picrust2_place_seqs, humann (diamond index).
 - **quast test 8** fails under sync as well.
+
+---
+
+## Post-fix investigation of remaining async failures (2026-06-16)
+
+After the converter + nested-conditional fixes, run 27597761421 still had ~25 failures.
+Investigated the 17 kept repos:
+
+### Framework bug found & fixed: varvamp test 3 — 500 on `/api/tool_requests/{id}`
+`build_xml_tool_source` parsed raw tool-source strings with `strip_whitespace=True`, which
+`.strip()`s every element's text — unlike the file/macro loader (`xml_macros.load` uses
+`strip_whitespace=False`). varvamp's `PRIMER_3_PENALTY` regex validator body
+`" *(\d+, *)*\d+ *$"` (leading optional spaces) became the invalid `"*(\d+..."`. The async
+path stores `tool_source.to_string()` and re-parses it via this string path when encoding the
+request, so the corrupted regex raised `nothing to repeat at position 0` during static
+validation → 500. Fixed by parsing raw string sources with `strip_whitespace=False`
+(Galaxy commit "Preserve significant whitespace when parsing a tool from its raw string
+source") + regression test.
+
+### Request-build is otherwise CORRECT for all 17 repos
+Ran `validate_test_cases_for_tool_source` across every test of all 17 repos: **no validation
+errors**. Spot-checked the async-built state vs each test's intent for the suspicious cases
+(gubbins extensive_search, gatk4 optional_parameters, novoplasty reference_cond) — async
+builds **exactly** what the test specifies. The earlier "async vs weekly param diff" was
+**confounded**: the async run (mvdbeek/batch) and weekly run (galaxyproject/main) number
+tests independently and run slightly different tool versions, so `tool-N` did not refer to
+the same test. That diff is not a reliable signal.
+
+### Remaining failures are execution-side, not parameter bugs
+The remaining failures are `failure` (output differs) or job errors, with correct request
+params. Likely causes: genuine tool nondeterminism, stale expected outputs, real tool/runtime
+issues (multigsea R package load, allegro segfault 139, spapros/picrust2 job errors), or
+batch-branch tests differing from main. Confirming any single one as async-specific requires
+running the *same* tool+test in both sync and async on the batch branch (in progress for
+gubbins as a representative no-compressed-input case).
