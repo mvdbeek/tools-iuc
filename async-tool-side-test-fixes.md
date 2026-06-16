@@ -1,5 +1,18 @@
 # Async submission: tool-side test bugs to fix
 
+> **RESOLUTION (2026-06-16).** Re-validating the list against the *current* branch with
+> Galaxy's `validate_test_cases_for_tool_source` showed most of these were already fixed on
+> `batch-test-async-submission` (gatk4, hisat2, quast, multigsea, spapros, picrust2 — all
+> tests OK). The only two still failing — **humann** (test 0) and **dropletutils** (tests
+> 0/1) — turned out **not** to be tool/test bugs but a **framework gap**: when a legacy test
+> omits a *nested* conditional's discriminator (relying on its default when, as the sync API
+> does), the async builder's loose fallback mis-resolved it to an *enclosing* conditional's
+> discriminator that shares the generic name (`selector`/`use`). Fixed in Galaxy
+> `lib/galaxy/tool_util/parameters/case.py` (commit "Don't resolve an omitted nested
+> conditional discriminator to an ancestor's") — **no tool-side test edits required**, so
+> zero maintainer fallout. This also means omitted defaulted conditionals are now handled
+> like sync, which is the right basis for any future automated legacy-test fixer.
+
 These tests fail at the async **request-build** layer (the new `POST /api/jobs`
 test-case → state conversion) but pass under sync `POST /api/tools`, which tolerates
 them via loose behaviour. Unless marked otherwise these are **test bugs** to fix in the
