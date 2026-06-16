@@ -376,3 +376,26 @@ rejections of real test/tool bugs (sync only "passes" them by silently ignoring 
 unselected-branch params). Combined with the converter, nested-conditional, bare-name-inference,
 and validator-whitespace fixes, the framework now handles the legitimate legacy patterns; the
 residual failures are genuine tool-side issues.
+
+### multigsea __absent__ → framework fix (first-option default), 2026-06-16
+Per maintainer note: on a legacy profile the first option is the selected option when no
+explicit default exists, and this must apply to the runtime incomplete-payload behaviour too.
+Findings:
+- The **runtime** path (`convert.py:fill_static_defaults`) ALREADY records the first-option
+  default - for an incomplete multigsea payload it fills `proteomics_data = {selector: "true",
+  ...}`. So the runtime half was already correct.
+- The gap was in **test-state building** (`case.py:_merge_into_state`): when a test omitted the
+  discriminator and the active branch was the default when, the discriminator was not written,
+  so the discriminated-union model routed the state to the phantom `__absent__` branch.
+- Fix: record the selected when's discriminator whenever the discriminator was omitted (default
+  or inferred), generalizing the earlier non-default-when inference. Galaxy commit "Record the
+  default (first-option) discriminator for an omitted legacy conditional" + regression test.
+  Now test-state matches runtime: omitted multigsea conditionals validate against `true` (first
+  option), not `__absent__`.
+- Residual: multigsea's `true` branch has a REQUIRED `proteomics` data param the test omits, so
+  it still reports "field required" - but now consistently in both test-state and runtime, which
+  is correct. That is a tool/test issue (proteomics is enabled-by-default with no data; the tool
+  should default the conditional to Disabled, or the test should select it / provide data).
+
+So multigsea moves from "framework __absent__ divergence" to "genuine tool/test bug, correctly
+and consistently flagged."
