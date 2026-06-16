@@ -307,3 +307,24 @@ real tool/runtime issues, container availability), not async-framework bugs.
 fixes, the async submission **framework** is solid — every request-build validates and the
 async-specific failures are resolved. The remaining red tests are tool-side and out of scope
 for the async framework work (they also fail under sync on this branch).
+
+### CORRECTION (2026-06-16): main's clean tools have 60 async request-build failures
+Merged upstream/main, then reset the 15 still-failing tool dirs to main's clean versions and
+re-ran `validate_test_cases_for_tool_source`: **60 request-build failures** ("Invalid
+parameter name found …") across gatk4 (reference_sequence ×6), hisat2 (type ×17), mlst
+(advanced ×8), picrust2 (hsp_method__options, study_fasta, no_regroup), gubbins (iterations,
+converge_method, `expensive_research` typo), gemini, episcanpy, fairy, spapros, cnvkit,
+dropletutils (lowerpopr typo), novoplasty, multigsea.
+
+So the batch branch's 334 commits are **legitimate async fixes** for real test-definition
+issues that sync tolerates (unknown params are ignored) but async rejects — NOT drift that
+broke working tools. The batch branch is AHEAD of main on async-readiness; resetting to main
+regresses 60 tests (reset was undone). My earlier "remaining failures are tool-side drift"
+conclusion only describes the ~20 failures that remain AFTER the batch's fixes (e.g. gubbins-4
+output diff, which does fail in sync too). The broader async surface is large.
+
+Two classes among the 60: (a) genuine test typos (lowerpopr, expensive_research,
+hsp_method__options) — async correctly rejects, must be fixed in the test; (b) structural
+"all tests fail" cases (gatk4 reference_sequence, hisat2 type, mlst advanced) — likely
+loose-name/elided resolution the framework could handle (like the nested-conditional fix),
+which would remove the need for those per-tool edits. Worth converting (b) to framework fixes.
