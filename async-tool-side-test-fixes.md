@@ -352,3 +352,27 @@ Net: the batch branch's async edits are a MIX — some necessary (typos), some t
 framework already handles (bare names), some replaceable by further framework work (structural).
 The async framework itself (with the converter/resolver/whitespace fixes) is sound; the strict
 `validate_test_cases_for_tool_source` is stricter than the real submission path.
+
+### Structural cases triaged → 1 framework fix, 4 genuine test/tool bugs (2026-06-16)
+Worked through the 6 structural (non-typo) request-build failures on main:
+- **novoplasty** (bare `reference`) & **hisat2** (bare `novel_splicesite_outfile`): FIXED in the
+  framework. `_infer_when_from_inputs` ignored legacy *unqualified* (bare) inputs, so a test that
+  supplies a non-default branch's param by its short name and omits the discriminator fell back
+  to the default (empty) branch and rejected the param. Now bare inputs are considered when
+  inferring the active when. Galaxy commit "Infer conditional when from bare unqualified branch
+  params in async tool tests" + regression test. Removes the need for novoplasty/hisat2 test edits.
+- **gatk4** (`read_filter`): test sets `optional_parameters="no"` but supplies `read_filter`, a
+  `yes`-branch param → genuine wrong-branch test bug; async correctly rejects. Not framework-fixable.
+- **episcanpy** (`lazy_pp_n_neighbors` etc.): the param does not exist in main's model at all
+  (tool incomplete / renamed) → tool fix, not framework.
+- **spapros** (`method|use_marker_corr`): `use_marker_corr` lives only in the `plot_summary`
+  branch, test selects `plot_marker_corr` → genuine unselected-branch test bug. Not framework.
+- **multigsea** (`proteomics_data.__absent__`): conditional has no `selected="true"` default;
+  defaulting to the first option (Enabled) still requires data the test omits → needs a tool-side
+  default (selected Disabled) or explicit selector. Not cleanly framework-fixable.
+
+So of the structural class, 1 framework fix clears 2 tools; the remaining 4 are correct async
+rejections of real test/tool bugs (sync only "passes" them by silently ignoring unknown or
+unselected-branch params). Combined with the converter, nested-conditional, bare-name-inference,
+and validator-whitespace fixes, the framework now handles the legitimate legacy patterns; the
+residual failures are genuine tool-side issues.
