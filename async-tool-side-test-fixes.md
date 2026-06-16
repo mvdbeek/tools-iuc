@@ -328,3 +328,27 @@ hsp_method__options) — async correctly rejects, must be fixed in the test; (b)
 "all tests fail" cases (gatk4 reference_sequence, hisat2 type, mlst advanced) — likely
 loose-name/elided resolution the framework could handle (like the nested-conditional fix),
 which would remove the need for those per-tool edits. Worth converting (b) to framework fixes.
+
+### RE-CORRECTION (2026-06-16): real async request-build failures on main = 17, not 60
+The "60" above came from `validate_test_cases_for_tool_source` (`test_case_validation`), which
+rejects ANY unhandled test input. But the **actual** async request-build path
+(`verify/parse.py` → `test_case_state(validate=True)`) applies the legacy bare-name tolerance
+(`_input_name_was_handled_by_legacy_fallback`, profile < 24.2): it resolves an unqualified
+`<param name="reference_sequence">` into its conditional and accepts it. Re-measured main's 15
+failing tools with that tolerant path → **17** genuine request-build failures, not 60. So my
+strict validator over-counted by ~43 pure legacy bare-names (e.g. gatk4's reference_sequence),
+which the real async build accepts — those per-tool qualifications were NOT strictly required.
+
+The real 17 split into:
+- **Genuine test typos** async correctly rejects (batch fixes are right, not framework-fixable):
+  dropletutils `lowerpopr` (→lowerprop), fairy `minimum-ani`/`min-spacing` (dash vs underscore),
+  gubbins `expensive_research` (→extensive), picrust2 `hsp_method__options` (double underscore).
+- **Structural / wrong-branch / default-when** (candidates for FRAMEWORK fixes that would remove
+  the per-tool edit): gatk4 `read_filter`, episcanpy `method|*`, novoplasty bare `reference`,
+  spapros `method|use_marker_corr`, multigsea `proteomics_data.__absent__` (no selected default),
+  hisat2 `novel_splicesite_outfile`.
+
+Net: the batch branch's async edits are a MIX — some necessary (typos), some that a tolerant
+framework already handles (bare names), some replaceable by further framework work (structural).
+The async framework itself (with the converter/resolver/whitespace fixes) is sound; the strict
+`validate_test_cases_for_tool_source` is stricter than the real submission path.
