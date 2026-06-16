@@ -51,10 +51,7 @@ jobs:
       run: |
         repos=(
           tools/allegro
-          tools/biscot
-          tools/bwameth
           tools/cnvkit
-          tools/deseq2
           tools/dropletutils
           tools/episcanpy
           tools/fairy
@@ -64,14 +61,10 @@ jobs:
           tools/hisat2
           tools/humann
           tools/hybpiper
-          tools/meningotype
-          tools/metawrapmg
           tools/mlst
           tools/multigsea
           tools/novoplasty
           tools/picrust2
-          tools/quast
-          tools/repeatmodeler
           tools/spapros
           tools/varvamp
         )
