@@ -2,7 +2,7 @@
     <description></description>
     <macros>
         <token name="@TOOL_VERSION@">2.0.0</token>
-        <token name="@VERSION_SUFFIX@">4</token>
+        <token name="@VERSION_SUFFIX@">5</token>
         <token name="@PROFILE@">22.05</token>
         <xml name="version_command">
             <version_command><![CDATA[$ coreprofiler --version]]></version_command>
@@ -27,11 +27,8 @@
         <requirement type="package" version="2.16.0">blast</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-#from datetime import date
-
 #set $scheme_name = str($select_db.coreprofiler_scheme_select).split('-')[0]
 #set $scheme_db = str($select_db.coreprofiler_scheme_select).split('-')[3]
-#set $today = date.today().strftime('%Y-%m-%d')
 
 #if $scheme_db == "pubmlst"
     #set $db_version = str($select_db.db_version)
@@ -44,7 +41,7 @@
 #end if
 
 mkdir -p '$out_file.extra_files_path' &&
-mkdir -p 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}/scheme_$scheme_name/' &&
+mkdir -p 'coreprofiler_build/scheme_$scheme_name/' &&
 #if $db_version == "token"
         #if $scheme_db == "pubmlst"
             source "\$PUBMLST_COREPROFILER_SECRETS_PATH" &&
@@ -65,7 +62,7 @@ mkdir -p 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}/scheme
 
     coreprofiler db download 
         -s '$scheme_name'
-        -o 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}/scheme_$scheme_name'
+        -o 'coreprofiler_build/scheme_$scheme_name'
         ## Used only for test 
         #if $hide_test
             -t
@@ -78,14 +75,16 @@ mkdir -p 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}/scheme
         -as "\$COREPROFILER_ACCESS_SECRET"
 #end if
 &&
+if [ -z "\$(find 'coreprofiler_build/scheme_$scheme_name' -type f)" ]; then echo "Error: no scheme files were downloaded for $scheme_name." >&2; exit 1; fi &&
+scheme_digest=\$(cd 'coreprofiler_build/scheme_$scheme_name' && find . -type f -exec sha256sum {} + | LC_ALL=C sort | sha256sum | cut -d ' ' -f 1) &&
 coreprofiler db makeblastdb
-    -s 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}/scheme_$scheme_name'
+    -s 'coreprofiler_build/scheme_$scheme_name'
     -n '$scheme_name'
-    -p 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}/db_$scheme_name' &&
+    -p 'coreprofiler_build/db_$scheme_name' &&
 
-mv 'coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}' '$out_file.extra_files_path' &&
+mv 'coreprofiler_build' '$out_file.extra_files_path/coreprofiler_${scheme_name}_${scheme_db}_${db_version}_'\$scheme_digest &&
 
-cp '$dmjson' '$out_file'
+sed "s/__SCHEME_DIGEST__/\$scheme_digest/g" '$dmjson' > '$out_file'
     ]]></command>
     <configfiles>
         <configfile name="dmjson"><![CDATA[
@@ -123,11 +122,11 @@ cp '$dmjson' '$out_file'
     "data_tables":{
     "coreprofiler_versioned_scheme":[
     {
-        "value": "coreprofiler_downloaded_${today}-${scheme_name}-${scheme_desc}-${scheme_loci}-${scheme_db}-${db_version}",
+        "value": "coreprofiler_${scheme_name}_${scheme_db}_${db_version}___SCHEME_DIGEST__",
         "name": "${scheme_name}: ${scheme_desc} [${scheme_loci} loci] (${scheme_db} - ${db_date_version})",
         "tool_version": "@TOOL_VERSION@",
         "database": "${scheme_db}",
-        "path": "coreprofiler_${scheme_name}_${scheme_db}_${db_version}_${today}",
+        "path": "coreprofiler_${scheme_name}_${scheme_db}_${db_version}___SCHEME_DIGEST__",
         "db_path": "db_${scheme_name}/${scheme_name}.fasta",
         "scheme_path": "scheme_${scheme_name}"
     }
@@ -280,11 +279,11 @@ cp '$dmjson' '$out_file'
             <output name="out_file">
                 <assert_contents>
                     <has_text text='"coreprofiler_versioned_scheme":'/>
-                    <has_text_matching expression='"value": "coreprofiler_downloaded_[0-9-]{10}-borrelia_3-cgMLST-639-pubmlst-no_token"'/>
+                    <has_text_matching expression='"value": "coreprofiler_borrelia_3_pubmlst_no_token_[0-9a-f]{64}"'/>
                     <has_text text='"name": "borrelia_3: cgMLST [639 loci] (pubmlst - version before 2025)"'/>
                     <has_text_matching expression='"tool_version": "[0-9.]+"'/>
                     <has_text_matching expression='"database": "pubmlst"'/>
-                    <has_text_matching expression='"path": "coreprofiler_borrelia_3_pubmlst_no_token_[0-9-]{10}"'/>
+                    <has_text_matching expression='"path": "coreprofiler_borrelia_3_pubmlst_no_token_[0-9a-f]{64}"'/>
                     <has_text text='"db_path": "db_borrelia_3/borrelia_3.fasta"'/>
                     <has_text text='"scheme_path": "scheme_borrelia_3"'/>
                 </assert_contents>
@@ -300,11 +299,11 @@ cp '$dmjson' '$out_file'
             <output name="out_file">
                 <assert_contents>
                     <has_text text='"coreprofiler_versioned_scheme":'/>
-                    <has_text_matching expression='"value": "coreprofiler_downloaded_[0-9-]{10}-yersinia_1-Yersinia_cgMLST-500-bigsdb-no_token"'/>
+                    <has_text_matching expression='"value": "coreprofiler_yersinia_1_bigsdb_no_token_[0-9a-f]{64}"'/>
                     <has_text text='"name": "yersinia_1: Yersinia_cgMLST [500 loci] (bigsdb - version before 2025)"'/>
                     <has_text_matching expression='"tool_version": "[0-9.]+"'/>
                     <has_text_matching expression='"database": "bigsdb"'/>
-                    <has_text_matching expression='"path": "coreprofiler_yersinia_1_bigsdb_no_token_[0-9-]{10}"'/>
+                    <has_text_matching expression='"path": "coreprofiler_yersinia_1_bigsdb_no_token_[0-9a-f]{64}"'/>
                     <has_text text='"db_path": "db_yersinia_1/yersinia_1.fasta"'/>
                     <has_text text='"scheme_path": "scheme_yersinia_1"'/>
                 </assert_contents>
@@ -319,11 +318,11 @@ cp '$dmjson' '$out_file'
             <output name="out_file">
                 <assert_contents>
                     <has_text text='"coreprofiler_versioned_scheme":'/>
-                    <has_text_matching expression='"value": "coreprofiler_downloaded_[0-9-]{10}-escherichia_v1-cgMLST-2513-enterobase-no_token"'/>
+                    <has_text_matching expression='"value": "coreprofiler_escherichia_v1_enterobase_no_token_[0-9a-f]{64}"'/>
                     <has_text_matching expression='"name": "escherichia_v1: cgMLST \[2513 loci\] \(enterobase - downloaded on [0-9-]{10}\)"'/>
                     <has_text_matching expression='"tool_version": "[0-9.]+"'/>
                     <has_text_matching expression='"database": "enterobase"'/>
-                    <has_text_matching expression='"path": "coreprofiler_escherichia_v1_enterobase_no_token_[0-9-]{10}"'/>
+                    <has_text_matching expression='"path": "coreprofiler_escherichia_v1_enterobase_no_token_[0-9a-f]{64}"'/>
                     <has_text text='"db_path": "db_escherichia_v1/escherichia_v1.fasta"'/>
                     <has_text text='"scheme_path": "scheme_escherichia_v1"'/>
                 </assert_contents>
@@ -338,11 +337,11 @@ cp '$dmjson' '$out_file'
             <output name="out_file">
                 <assert_contents>
                     <has_text text='"coreprofiler_versioned_scheme":'/>
-                    <has_text_matching expression='"value": "coreprofiler_downloaded_[0-9-]{10}-mgallisepticum-Mycoplasma_gallisepticum-425-cgmlstorg-no_token"'/>
+                    <has_text_matching expression='"value": "coreprofiler_mgallisepticum_cgmlstorg_no_token_[0-9a-f]{64}"'/>
                     <has_text_matching expression='"name": "mgallisepticum: Mycoplasma_gallisepticum \[425 loci\] \(cgmlstorg - downloaded on [0-9-]{10}\)"'/>
                     <has_text_matching expression='"tool_version": "[0-9.]+"'/>
                     <has_text_matching expression='"database": "cgmlstorg"'/>
-                    <has_text_matching expression='"path": "coreprofiler_mgallisepticum_cgmlstorg_no_token_[0-9-]{10}"'/>
+                    <has_text_matching expression='"path": "coreprofiler_mgallisepticum_cgmlstorg_no_token_[0-9a-f]{64}"'/>
                     <has_text text='"db_path": "db_mgallisepticum/mgallisepticum.fasta"'/>
                     <has_text text='"scheme_path": "scheme_mgallisepticum"'/>
                 </assert_contents>

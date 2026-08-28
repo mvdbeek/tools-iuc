@@ -2,7 +2,7 @@
     <description></description>
     <macros>
         <token name="@TOOL_VERSION@">0.11.0</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <token name="@VERSION_SUFFIX@">2</token>
         <token name="@PROFILE@">22.05</token>
         <xml name="element_assert" token_name="" token_text="">
             <element name="@NAME@">
@@ -32,23 +32,17 @@ mv resfinder_${resfinder_commit}_pointfinder_${pointfinder_commit}_plasmidfinder
 cp '$dmjson' '$out_file'
     ]]></command>
     <configfiles>
-        <configfile name="dmjson"><![CDATA[
-#from datetime import date
-
-#set $resfinder_commit = str($resfinder_database_select).split('_')[-2]
+        <configfile name="dmjson"><![CDATA[#set $resfinder_commit = str($resfinder_database_select).split('_')[-2]
 #set $resfinder_tag_commit_date = str($resfinder_database_select).split('_', 1)[1]
-
 #set $plasmidfinder_commit = str($plasmidfinder_database_select).split('_')[-2]
 #set $plasmidfinder_tag_commit_date = str($plasmidfinder_database_select).split('_', 1)[1]
-
 #set $pointfinder_commit = str($pointfinder_database_select).split('_')[-2]
 #set $pointfinder_tag_commit_date = str($pointfinder_database_select).split('_', 1)[1]
-
 {
     "data_tables":{
     "staramr_database":[
     {
-        "value": "staramr_downloaded_#echo date.today().strftime('%d%m%Y')#_resfinder_${resfinder_commit}_pointfinder_${pointfinder_commit}_plasmidfinder_${plasmidfinder_commit}",
+        "value": "staramr_resfinder_${resfinder_commit}_pointfinder_${pointfinder_commit}_plasmidfinder_${plasmidfinder_commit}",
         "name": "starAMR databases with ResFinder: ${resfinder_tag_commit_date}, PointFinder: ${pointfinder_tag_commit_date}, PlasmidFinder: ${plasmidfinder_tag_commit_date}",
         "path": "resfinder_${resfinder_commit}_pointfinder_${pointfinder_commit}_plasmidfinder_${plasmidfinder_commit}",
         "resfinder_commit": "${resfinder_commit}",
@@ -57,7 +51,8 @@ cp '$dmjson' '$out_file'
     }
     ]
 }
-        }]]></configfile>
+        }
+]]></configfile>
     </configfiles>
     <inputs>
         <param name="resfinder_database_select" type="select" label="ResFinder Database version" help="Choose a ResFinder database version to download">                   
@@ -95,17 +90,7 @@ cp '$dmjson' '$out_file'
             <param name="resfinder_database_select" value="resfinder_2.4.0_d1e607b_2024-08-06" />
             <param name="pointfinder_database_select" value="pointfinder_4.1.1_694919f_2024-08-08" />
             <param name="plasmidfinder_database_select" value="plasmidfinder_3e77502_2024-03-07" />
-            <output name="out_file">
-                <assert_contents>
-                    <has_text text='"staramr_database":'/>
-                    <has_text_matching expression='"value": "staramr_downloaded_[0-9]{8}_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"'/>
-                    <has_text text='"name": "starAMR databases with ResFinder: 2.4.0_d1e607b_2024-08-06, PointFinder: 4.1.1_694919f_2024-08-08, PlasmidFinder: 3e77502_2024-03-07"'/>
-                    <has_text_matching expression='"path": "resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"'/>
-                    <has_text text='"resfinder_commit": "d1e607b"'/>
-                    <has_text text='"pointfinder_commit": "694919f"'/>
-                    <has_text text='"plasmidfinder_commit": "3e77502"'/>
-                </assert_contents>
-            </output>
+            <output name="out_file" file="staramr_data_manager.json"/>
         </test>
     </tests>
     <help><![CDATA[

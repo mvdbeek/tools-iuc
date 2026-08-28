@@ -1,0 +1,14 @@
+{
+    "data_tables":{
+    "staramr_database":[
+    {
+        "value": "staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502",
+        "name": "starAMR databases with ResFinder: 2.4.0_d1e607b_2024-08-06, PointFinder: 4.1.1_694919f_2024-08-08, PlasmidFinder: 3e77502_2024-03-07",
+        "path": "resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502",
+        "resfinder_commit": "d1e607b",
+        "pointfinder_commit": "694919f",
+        "plasmidfinder_commit": "3e77502"
+    }
+    ]
+}
+        }
