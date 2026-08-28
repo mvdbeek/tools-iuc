@@ -2,7 +2,6 @@
 
 # IMPORTANT: This will run using Python 2 still!
 
-import datetime
 import json
 import os
 import subprocess
@@ -22,7 +21,6 @@ def load_gemini_config(config_file):
 
 
 def main():
-    today = datetime.date.today()
     with open(sys.argv[1]) as fh:
         params = json.load(fh)
     target_directory = params['output_data'][0]['extra_files_path']
@@ -43,18 +41,23 @@ def main():
     else:
         anno_desc = ''
 
+    database_version = params['param_dict']['gemini_db_version']
+    database_id = 'gemini-%s' % database_version
+    if anno_extras:
+        database_id += '-%s' % '-'.join(extra.lower() for extra in anno_extras)
+
     data_manager_dict = {
         'data_tables': {
             'gemini_versioned_databases': [
                 {
-                    'value': today.isoformat(),
+                    'value': database_id,
                     'dbkey': 'hg19',
-                    'version': params['param_dict']['gemini_db_version'],
+                    'version': database_version,
                     'name':
-                        'GEMINI annotations%s (%s snapshot)' % (
-                            anno_desc, today.isoformat()
-                    ),
-                    'path': './%s' % today.isoformat()
+                        'GEMINI annotations%s (database version %s)' % (
+                            anno_desc, database_version
+                        ),
+                    'path': './%s' % database_id
                 }
             ]
         }
@@ -63,6 +66,7 @@ def main():
     # Save the data table metadata to the json results file
     with open(sys.argv[1], 'w') as fh:
         json.dump(data_manager_dict, fh, sort_keys=True)
+        fh.write('\n')
 
     # Generate a minimal configuration file for GEMINI update
     # to instruct the tool to download the annotation data into a

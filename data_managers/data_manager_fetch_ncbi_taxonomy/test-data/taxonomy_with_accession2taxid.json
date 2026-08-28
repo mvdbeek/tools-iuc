@@ -1,13 +1,13 @@
 {
-  "data_tables":{
-    "ncbi_taxonomy":[
+  "data_tables": {
+    "ncbi_taxonomy": [
       {
         "value": "tax_name",
         "name": "tax_name",
         "path": "."
       }
-    ]
-    ,"ncbi_accession2taxid":[
+    ],
+    "ncbi_accession2taxid": [
       {
         "value": "tax_name",
         "name": "tax_name",

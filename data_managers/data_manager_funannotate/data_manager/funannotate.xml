@@ -1,13 +1,15 @@
 <tool id="data_manager_funannotate" name="Funannotate data manager" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" tool_type="manage_data" profile="20.01">
     <macros>
         <token name="@TOOL_VERSION@">1.8.15</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@VERSION_SUFFIX@">2</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">funannotate</requirement>
     </requirements>
     <version_command>funannotate check --show-versions</version_command>
     <command detect_errors="exit_code"><![CDATA[
+        set -o pipefail;
+
         #if $wget:
             ## Asked for wget, we assume there's a certificate problem on (at least) one
             ## of the many requested servers, force disable of all checks
@@ -21,26 +23,37 @@
         #else
             -b all
         #end if
-            $wget
-        &&
-        cp '$dmjson' '$output_file'
+            $wget &&
+        awk '
+            BEGIN { FS = OFS = "\t"; valid = 1; records = 0 }
+            NF != 7 { valid = 0; next }
+            { print \$1, \$2, \$4, \$6, \$7; records++ }
+            END { if (!valid || records == 0) exit 1 }
+        ' '$output_file.extra_files_path/funannotate-db-info.txt' |
+            LC_ALL=C sort > 'funannotate.canonical.manifest' &&
+        funannotate_digest_line=\$(sha256sum 'funannotate.canonical.manifest') &&
+        funannotate_digest="\${funannotate_digest_line%% *}" &&
+        if [[ ! "\$funannotate_digest" =~ ^[0-9a-f]{64}\$ ]]; then exit 1; fi &&
+        sed "s/__FUNANNOTATE_SHA256__/\$funannotate_digest/g"
+            '$dmjson' > '$output_file'
     ]]></command>
     <configfiles>
-        <configfile name="dmjson"><![CDATA[
-#from datetime import datetime
-#set version_id=datetime.now().strftime("%Y-%m-%d-%H%M%S")
-    {
-      "data_tables":{
-        "funannotate":[
-          {
-            "value":"$version_id",
-            "description":"Funannotate database $version_id",
-            "format_version":"1.0",
-            "path":"$output_file.extra_files_path"
-          }
-        ]
+        <configfile name="dmjson"><![CDATA[#slurp
+#import json
+#set value = "funannotate-@TOOL_VERSION@-__FUNANNOTATE_SHA256__"
+{
+  "data_tables": {
+    "funannotate": [
+      {
+        "value": #echo json.dumps($value)#,
+        "description": #echo json.dumps("Funannotate database " + $value)#,
+        "format_version": "1.0",
+        "path": #echo json.dumps($value)#
       }
-    }]]></configfile>
+    ]
+  }
+}
+]]></configfile>
     </configfiles>
     <inputs>
         <param name="partial_data" type="hidden" value="" help="Used for testing"/>
@@ -54,8 +67,8 @@
             <param name="partial_data" value="--partial"/>
             <output name="output_file">
                 <assert_contents>
-                    <has_text text="Funannotate database "/>
-                    <has_text text='"format_version":"1.0"'/>
+                    <has_text_matching expression='"value": "funannotate-1\.8\.15-[0-9a-f]{64}"'/>
+                    <has_text text='"format_version": "1.0"'/>
                 </assert_contents>
             </output>
         </test>
@@ -64,8 +77,8 @@
             <param name="wget" value="True"/>
             <output name="output_file">
                 <assert_contents>
-                    <has_text text="Funannotate database "/>
-                    <has_text text='"format_version":"1.0"'/>
+                    <has_text_matching expression='"value": "funannotate-1\.8\.15-[0-9a-f]{64}"'/>
+                    <has_text text='"format_version": "1.0"'/>
                 </assert_contents>
             </output>
         </test>

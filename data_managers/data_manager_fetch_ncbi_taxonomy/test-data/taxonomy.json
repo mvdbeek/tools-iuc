@@ -1,6 +1,6 @@
 {
-  "data_tables":{
-    "ncbi_taxonomy":[
+  "data_tables": {
+    "ncbi_taxonomy": [
       {
         "value": "tax_name",
         "name": "tax_name",
