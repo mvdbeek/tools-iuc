@@ -2,7 +2,7 @@
     <description>dataset dowloader</description>
         <macros>
         <token name="@TOOL_VERSION@">6.1.0</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@VERSION_SUFFIX@">1</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">busco</requirement>
@@ -19,26 +19,60 @@
         ## https://gitlab.com/ezlab/busco/-/issues/789
         if [ -d '$out_file.extra_files_path'/lineages ]; then
             find '$out_file.extra_files_path'/lineages/ -name "*.faa.gz" -exec gunzip {} \;;
-        fi
-        && cp '$dmjson' '$out_file' 
+        fi &&
+        ## Galaxy joins command lines with spaces, so every statement below
+        ## must carry its own terminating ";" where the shell needs one.
+        if [ -f '$out_file.extra_files_path/file_versions.tsv' ]; then
+            while IFS="\$(printf '\t')" read -r dataset release_date upstream_hash domain file_type remainder; do
+                if [ -n "\$file_type" ] && [ -d '$out_file.extra_files_path/lineages/'"\$dataset" ]; then
+                    printf '%s\t%s\t%s\t%s\t%s\n' "\$dataset" "\$release_date" "\$upstream_hash" "\$domain" "\$file_type";
+                fi;
+            done < '$out_file.extra_files_path/file_versions.tsv' | LC_ALL=C sort > '$out_file';
+        else
+            : > '$out_file';
+        fi &&
+        if [ -s '$out_file' ]; then
+            source_identity=\$(sha256sum '$out_file' | cut -d ' ' -f 1);
+        else
+            (
+                cd '$out_file.extra_files_path' &&
+                find . -type f | LC_ALL=C sort |
+                while IFS= read -r file; do
+                    relative_path=\${file#./};
+                    if [ "\$relative_path" != "file_versions.tsv" ]; then
+                        printf '%s\0' "\$relative_path";
+                        cat "\$file";
+                        printf '\0';
+                    fi;
+                done
+            ) > '$out_file' &&
+            if [ ! -s '$out_file' ]; then
+                echo "BUSCO did not download any data files" >&2;
+                exit 1;
+            fi &&
+            source_identity=\$(sha256sum '$out_file' | cut -d ' ' -f 1);
+        fi &&
+        download_date=\$(date +%F) &&
+        sed -e "s/__SOURCE_DIGEST__/\$source_identity/g" -e "s/__DOWNLOAD_DATE__/\$download_date/g" '$dmjson' > '$out_file'.tmp &&
+        mv '$out_file'.tmp '$out_file'
     ]]></command>
     <configfiles>
-        <configfile name="dmjson"><![CDATA[
-#from datetime import datetime
-    {
-      "data_tables":{
-        "busco_database":[
-          {
-            "value":"$lineage $datasets_version #echo datetime.now().strftime('%Y-%m-%d-%H%M%S')#",
-            "name":"$lineage $datasets_version #echo datetime.now().strftime('%Y-%m-%d-%H%M%S')#",
-            "version":"@TOOL_VERSION@",
-            "path":"$out_file.extra_files_path"
-          }
-        ]
-      }
-    }]]>
-            </configfile>
-        </configfiles>
+        <configfile name="dmjson"><![CDATA[#slurp
+#import json
+#set $lineage_value = str($lineage)
+#set $datasets_version_value = str($datasets_version)
+#if $lineage_value == "virus"
+    #set $identity_label = "virus"
+    #set $display_label = "virus"
+#else
+    #set $lineage_label = $lineage_value.rstrip("_") or "all"
+    #set $identity_label = $lineage_label + "_" + $datasets_version_value
+    #set $display_label = $lineage_label + " " + $datasets_version_value
+#end if
+#set $entry = {"name": "BUSCO " + $display_label + " (downloaded __DOWNLOAD_DATE__)", "path": str($out_file.extra_files_path), "value": "busco_" + $identity_label + "___SOURCE_DIGEST__", "version": "@TOOL_VERSION@"}
+${json.dumps({"data_tables": {"busco_database": [$entry]}}, sort_keys=True)}
+]]></configfile>
+    </configfiles>
     <inputs>
         <param name="lineage" argument="--download" type="select" label="Select the lineage to be downloaded">
             <option value="">All</option>
@@ -59,8 +93,9 @@
             <param name="lineage" value="virus"/>
             <output name="out_file">
                 <assert_contents>
-                    <has_text text="virus"/>
                     <has_text text="@TOOL_VERSION@"/>
+                    <has_text_matching expression='"name": "BUSCO virus \(downloaded [0-9]{4}-[0-9]{2}-[0-9]{2}\)"'/>
+                    <has_text_matching expression='"value": "busco_virus_[a-f0-9]{64}"'/>
                 </assert_contents>
             </output>
         </test>
