@@ -1,32 +1,47 @@
 from __future__ import division, print_function
 
 import argparse
-import datetime
+import hashlib
 import json
 import os
 import os.path
-import shlex
 import subprocess
 
 DATA_TABLE_NAME = "ncbi_taxonomy_sqlite"
+
+
+def taxonomy_digest(taxonomy_dir):
+    """Hash the two source files consumed by taxonomy_util."""
+    digest = hashlib.sha256()
+    for filename in ("nodes.dmp", "names.dmp"):
+        file_digest = hashlib.sha256()
+        with open(os.path.join(taxonomy_dir, filename), "rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                file_digest.update(chunk)
+        digest.update(filename.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(file_digest.digest())
+    return digest.hexdigest()
 
 
 def build_sqlite(taxonomy_dir, output_directory, name=None, description=None):
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
     output_filename = os.path.join(output_directory, "tax.ncbitaxonomy.sqlite")
-    cmd_str = "taxonomy_util -d {} to_sqlite {}".format(output_filename, taxonomy_dir)
-    cmd = shlex.split(cmd_str)
-    subprocess.check_call(cmd)
+    subprocess.check_call(
+        ["taxonomy_util", "-d", output_filename, "to_sqlite", taxonomy_dir]
+    )
 
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
-    if name is None or name.strip() == "":
-        name = "ncbitaxonomy_build_" + today_str
+    source_digest = taxonomy_digest(taxonomy_dir)
+    value = "ncbitaxonomy_sha256_{}".format(source_digest)
 
     if description is None or description.strip() == "":
-        description = "NCBI Taxonomy database (built on {})".format(today_str)
+        display_name = name.strip() if name and name.strip() else "NCBI Taxonomy database"
+        description = "{} (source sha256:{})".format(
+            display_name, source_digest[:12]
+        )
 
-    data = [dict(value=name, description=description, path=output_filename)]
+    data = [dict(value=value, description=description, path=output_filename)]
     return data
 
 
@@ -75,3 +90,4 @@ if __name__ == "__main__":
     data_manager_dict["data_tables"][DATA_TABLE_NAME].extend(data)
     with open(args.galaxy_datamanager_filename, "w") as fh:
         json.dump(data_manager_dict, fh, sort_keys=True)
+        fh.write("\n")
