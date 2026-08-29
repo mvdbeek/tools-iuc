@@ -2,7 +2,7 @@
     <description>Scans genome assemblies against the ResFinder, PlasmidFinder, and PointFinder databases searching for AMR genes</description>
     <macros>
         <token name="@TOOL_VERSION@">0.12.3</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@VERSION_SUFFIX@">1</token>
         <token name="@PROFILE@">24.1</token>
         <xml name="element_assert" token_name="" token_text="">
             <element name="@NAME@">
@@ -352,7 +352,7 @@ $named_genomes
             <!-- TEST_1 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="16S-rc_gyrA-rc_beta-lactam.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="salmonella"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -410,7 +410,7 @@ $named_genomes
             <!-- TEST_2 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="16S-rc_gyrA-rc_beta-lactam.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="escherichia_coli"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -464,7 +464,7 @@ $named_genomes
             <!-- TEST_3 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="16S-rc_gyrA-rc_beta-lactam.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -506,7 +506,7 @@ $named_genomes
             <!-- TEST_4 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="16S-rc_gyrA-rc_beta-lactam.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -540,7 +540,7 @@ $named_genomes
             <!-- TEST_5 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="16S-rc_gyrA-rc_beta-lactam.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="99.8"/>
@@ -574,7 +574,7 @@ $named_genomes
             <!-- TEST_6 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="16S rc_gyrA rc_beta-lactam spaces (extra:characters).fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="99.8"/>
@@ -608,7 +608,7 @@ $named_genomes
             <!-- TEST_7 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="test-aminoglycoside.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -642,7 +642,7 @@ $named_genomes
             <!-- TEST_8 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="test-aminoglycoside.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -676,7 +676,7 @@ $named_genomes
             <!-- TEST_9 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="test-aminoglycoside.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
@@ -711,7 +711,7 @@ $named_genomes
             <!-- TEST_10 -->
             <param name="hide_db_build" value="true"/>
             <param name="genomes" value="test-aminoglycoside.fsa" ftype="fasta"/>
-            <param name="staramr_db_select" value="staramr_downloaded_20112024_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
+            <param name="staramr_db_select" value="staramr_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502"/>
             <param name="pointfinder_organism" value="disabled"/>
             <section name="advanced">
                 <param name="pid_threshold" value="98.0"/>
