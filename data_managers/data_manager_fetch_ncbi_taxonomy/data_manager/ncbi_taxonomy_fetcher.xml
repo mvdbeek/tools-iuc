@@ -1,4 +1,4 @@
-<tool id="ncbi_taxonomy_fetcher" name="NCBI" tool_type="manage_data" version="1.1" profile="24.0">
+<tool id="ncbi_taxonomy_fetcher" name="NCBI" tool_type="manage_data" version="1.3" profile="24.0">
     <description>taxonomy downloader</description>
     <requirements>
         <requirement type="package" version="1.25.0">wget</requirement>
@@ -22,45 +22,80 @@
                 wget -O - ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/${file}.gz | gunzip -c > '$out_file.extra_files_path/accession2taxid/${file}' &&
             #end for
         #end if
-        cp '$dmjson' '$out_file'
+        #if str($database_name)
+            cp '$dmjson' '$out_file'
+        #else
+            taxonomy_digest=\$(
+                cd '$out_file.extra_files_path/taxonomy/' &&
+                find . -type f -exec sha256sum '{}' + |
+                    LC_ALL=C sort |
+                    sha256sum
+            ) &&
+            taxonomy_digest="\${taxonomy_digest%% *}" &&
+            taxonomy_digest_short="\${taxonomy_digest:0:12}" &&
+            #if $name_maps
+                accession_digest=\$(
+                    cd '$out_file.extra_files_path/accession2taxid/' &&
+                    find . -type f -exec sha256sum '{}' + |
+                        LC_ALL=C sort |
+                        sha256sum
+                ) &&
+                accession_digest="\${accession_digest%% *}" &&
+                accession_digest_short="\${accession_digest:0:12}" &&
+            #end if
+            sed
+                -e "s/__NCBI_TAXONOMY_SHA256__/\$taxonomy_digest/g"
+                -e "s/__NCBI_TAXONOMY_SHA256_SHORT__/\$taxonomy_digest_short/g"
+                #if $name_maps
+                    -e "s/__NCBI_ACCESSION2TAXID_SHA256__/\$accession_digest/g"
+                    -e "s/__NCBI_ACCESSION2TAXID_SHA256_SHORT__/\$accession_digest_short/g"
+                #end if
+                '$dmjson' > '$out_file'
+        #end if
     ]]>
     </command>
-        <configfiles>
+    <configfiles>
         <configfile name="dmjson"><![CDATA[#slurp
-#if $database_name == ""
-    #import datetime
-    #import os.path
-    #set now = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
-    #set basename = os.path.basename(str($taxonomy_url))[:-7]
-    #set value = basename + "_" + now
-    #set name = basename + " " + now
+#import json
+#if str($database_name)
+    #set taxonomy_value = str($database_name).lower()
+    #set taxonomy_name = str($database_name)
 #else
-    #set value = $database_name.lower()
-    #set name = $database_name
+    #set taxonomy_value = "taxdump-sha256-__NCBI_TAXONOMY_SHA256__"
+    #set taxonomy_name = "taxdump (SHA-256 __NCBI_TAXONOMY_SHA256_SHORT__)"
 #end if
+#set table_separator = "," if $name_maps else ""
 {
-  "data_tables":{
-    "ncbi_taxonomy":[
+  "data_tables": {
+    "ncbi_taxonomy": [
       {
-        "value": "$value",
-        "name": "$name",
+        "value": #echo json.dumps($taxonomy_value)#,
+        "name": #echo json.dumps($taxonomy_name)#,
         "path": "."
       }
-    ]
+    ]#echo $table_separator#
 #if $name_maps
-    ,"ncbi_accession2taxid":[
+    "ncbi_accession2taxid": [
       {
-        "value": "$value",
-        "name": "$name",
+        #if str($database_name)
+            #set accession_value = $taxonomy_value
+            #set accession_name = $taxonomy_name
+        #else
+            #set accession_value = "accession2taxid-sha256-__NCBI_ACCESSION2TAXID_SHA256__"
+            #set accession_name = "accession2taxid (SHA-256 __NCBI_ACCESSION2TAXID_SHA256_SHORT__)"
+        #end if
+        "value": #echo json.dumps($accession_value)#,
+        "name": #echo json.dumps($accession_name)#,
         "path": "."
       }
     ]
 #end if
   }
-}]]></configfile>
+}
+]]></configfile>
     </configfiles>
     <inputs>
-        <param name="database_name" type="text" label="Name for this database" help="Enter a unique identifier, or leave blank for today's date" />
+        <param name="database_name" type="text" label="Name for this database" help="Enter a unique identifier, or leave blank to derive one from the downloaded content" />
         <param name="taxonomy_url" type="text" value='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz' label="Enter URL for taxonomy files" />
         <param name="name_maps" type="boolean" label="Also download accession2taxid data" checked="false" />
         <param name="partial_data" type="hidden" value="" help="Used for testing"/>
@@ -76,8 +111,8 @@
         <test>
             <output name="out_file">
                 <assert_contents>
-                    <has_text_matching expression='"value": "taxdump_\d\d\d\d-\d\d-\d\d-\d\d\d\d\d\d"'/>
-                    <has_text_matching expression='"name": "taxdump \d\d\d\d-\d\d-\d\d-\d\d\d\d\d\d"'/>
+                    <has_text_matching expression='"value": "taxdump-sha256-[0-9a-f]{64}"'/>
+                    <has_text_matching expression='"name": "taxdump \(SHA-256 [0-9a-f]{12}\)"'/>
                 </assert_contents>
             </output>
         </test>
