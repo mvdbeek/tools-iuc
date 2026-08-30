@@ -23,7 +23,7 @@
             #end for
         #end if
         #if str($database_name)
-            mv '$dmjson' '$out_file'
+            cp '$dmjson' '$out_file'
         #else
             taxonomy_digest=\$(
                 cd '$out_file.extra_files_path/taxonomy/' &&
