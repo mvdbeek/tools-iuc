@@ -1,0 +1,12 @@
+{
+  "data_tables":{
+    "deeparg":[
+      {
+        "value": "deeparg_1.0.4",
+        "name": "Files needed for running deepARG v-1.0.4",
+        "path": "deeparg_1.0.4",
+        "db_version": "1.0.4"
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
     <macros>
         <!-- on update run a local test setting `test` to something else than "true" -->
         <token name="@TOOL_VERSION@">0.17.0</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@VERSION_SUFFIX@">1</token>
         <token name="@PROFILE@">26.0</token>
     </macros>
     <requirements>
@@ -17,9 +17,9 @@
         mkdir -p '$out_file.extra_files_path' &&
         #if str($test) != "true"
             #if $input.is_select == "prebuilt"
-                #if $download == "human"
+                #if str($input.download) == "human"
                     zenodo_get 17288185 -m -g "*.idx" -o '$out_file.extra_files_path' &&
-                #elif $download == "mouse"
+                #elif str($input.download) == "mouse"
                     zenodo_get 17699167 -m -g "*.idx" -o '$out_file.extra_files_path' &&
                 #else
                     echo "Invalid prebuilt index selection" 1>&2 && exit 1 &&
@@ -28,62 +28,31 @@
                 deacon index build '$input.from_dm.fields.path' -o '$out_file.extra_files_path/${input.from_dm.fields.value}.idx' &&
             #end if
         #else
-            #set prebuilt_index_shortname = "testrun-1"
-            touch '$out_file.extra_files_path'/test.idx &&
+            ## create the files the dmjson entries reference so the data manager move step finds them
+            touch '$out_file.extra_files_path/panhuman-1.k31w15.idx' '$out_file.extra_files_path/panmouse-1.k31w15.idx' &&
         #end if
-            cat '$dmjson' &&
+        #if $input.is_select == "prebuilt"
             cp '$dmjson' '$out_file'
+        #else
+            source_digest=\$(sha256sum '$input.from_dm.fields.path' | cut -d ' ' -f 1) &&
+            sed "s/__SOURCE_DIGEST__/\$source_digest/g" '$dmjson' > '$out_file'
+        #end if
     ]]></command>
     <configfiles>
-        <configfile name="dmjson"><![CDATA[
-#from datetime import datetime
-#set time=datetime.now().strftime("%Y-%m-%d")
-{
-  "data_tables":{
-    "deacon":[
-      {
-        #if $input.is_select == "prebuilt"
-            #if $download == "human"
-                "path":"panhuman-1.k31w15.idx",
-            #else
-                "path":"panmouse-1.k31w15.idx",
-            #end if,
-        #else
-            "path":"${input.from_dm.fields.value}.idx",
-        #end if
-            "dbkey":"",
-        #if $input.is_select == "prebuilt"
-            #if $download == "human"
-                #set prebuilt_index_shortname = "panhuman-17288185"
-                "name":"panhuman-1 (k=31, w=15)",
-            #elif $download == "mouse"
-                #set prebuilt_index_shortname = "panmouse-17699167"
-                "name":"panmouse-1 (k=31, w=15)",
-            #end if
-        #else
-            "name":"${input.from_dm.fields.value} (k=31, w=15)",
-        #end if
-        #if $input.is_select == "prebuilt"
-            "version":"@TOOL_VERSION@",
-        #else
-            "version":"@TOOL_VERSION@",
-        #end if
-        #if $input.is_select == "prebuilt"
-            "value":"${prebuilt_index_shortname}",
-        #else
-            "value":"custom-${time}",
-        #end if
-        "format_version":"3",
-        #if $input.is_select == "prebuilt"
-            "note":"Prebuilt index files from the developers of deacon"
-        #else
-            "note":"Build from FASTA file ${input.from_dm.fields.value}"
-        #end if
-      }
-    ]
-  }
-}]]>
-        </configfile>
+        <configfile name="dmjson"><![CDATA[#slurp
+#import json
+#if str($input.is_select) == "prebuilt"
+    #if str($input.download) == "human"
+        #set $entry = {"name": "panhuman-1 (k=31, w=15)", "path": "panhuman-1.k31w15.idx", "value": "panhuman-17288185", "note": "Prebuilt index files from the developers of deacon", "dbkey": "", "format_version": "3", "version": "@TOOL_VERSION@"}
+    #else
+        #set $entry = {"name": "panmouse-1 (k=31, w=15)", "path": "panmouse-1.k31w15.idx", "value": "panmouse-17699167", "note": "Prebuilt index files from the developers of deacon", "dbkey": "", "format_version": "3", "version": "@TOOL_VERSION@"}
+    #end if
+#else
+    #set $source_value = str($input.from_dm.fields.value)
+    #set $entry = {"name": $source_value + " (k=31, w=15)", "note": "Build from FASTA file " + $source_value, "path": $source_value + ".idx", "value": "custom-" + $source_value + "-__SOURCE_DIGEST__", "dbkey": "", "format_version": "3", "version": "@TOOL_VERSION@"}
+#end if
+${json.dumps({"data_tables": {"deacon": [$entry]}}, separators=(",", ":"))}
+]]></configfile>
     </configfiles>
     <inputs>
         <conditional name="input">
@@ -119,12 +88,7 @@
                 <param name="from_dm" value="phiX174"/>
             </conditional>
             <param name="test" value="false"></param>
-            <output name="out_file">
-                <assert_contents>
-                    <has_text text='"format_version":"3"'/>
-                    <has_text text='"name":"phiX174 (k=31, w=15)"'/>
-                </assert_contents>
-            </output>
+            <output name="out_file" file="deacon-custom.json"/>
         </test>
         <test expect_num_outputs="1">
             <conditional name="input">
@@ -132,12 +96,7 @@
                 <param name="download" value="human"/>
             </conditional>
             <param name="test" value="true"/>
-            <output name="out_file">
-                <assert_contents>
-                    <has_text text='"format_version":"3"'/>
-                    <has_text text='"name":"panhuman-1 (k=31, w=15)"'/>
-                </assert_contents>
-            </output>
+            <output name="out_file" file="deacon-panhuman.json"/>
         </test>
     </tests>
     <help><![CDATA[

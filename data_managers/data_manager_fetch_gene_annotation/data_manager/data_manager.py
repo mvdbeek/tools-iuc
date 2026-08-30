@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import argparse
 import bz2
-import datetime
 import gzip
+import hashlib
 import json
 import os
 import shutil
 import sys
-import uuid
 import zipfile
 
 
@@ -34,16 +33,20 @@ class CompressedFile(object):
 
 
 class ZIPFile(CompressedFile):
-    magic = '\x50\x4b\x03\x04'
+    magic = b'\x50\x4b\x03\x04'
     file_type = 'zip'
     mime_type = 'compressed/zip'
 
     def open(self):
-        return zipfile.ZipFile(self.f)
+        archive = zipfile.ZipFile(self.f)
+        members = [m for m in archive.infolist() if not m.is_dir()]
+        if len(members) != 1:
+            raise ValueError('Expected exactly one file in zip archive, found %d' % len(members))
+        return archive.open(members[0])
 
 
 class BZ2File(CompressedFile):
-    magic = '\x42\x5a\x68'
+    magic = b'\x42\x5a\x68'
     file_type = 'bz2'
     mime_type = 'compressed/bz2'
 
@@ -52,7 +55,7 @@ class BZ2File(CompressedFile):
 
 
 class GZFile(CompressedFile):
-    magic = '\x1f\x8b\x08'
+    magic = b'\x1f\x8b\x08'
     file_type = 'gz'
     mime_type = 'compressed/gz'
 
@@ -100,37 +103,46 @@ def url_download(url):
         cf = get_compressed_file(file_name)
         if cf is not None:
             uncompressed_file_name = os.path.splitext(file_name)[0]
-            with open(uncompressed_file_name, 'w+') as uncompressed_file:
+            with open(uncompressed_file_name, 'wb') as uncompressed_file:
                 shutil.copyfileobj(cf.accessor, uncompressed_file)
             os.remove(file_name)
             file_name = uncompressed_file_name
     except IOError as e:
-        sys.stderr.write('Error occured downloading reference file: %s' % e)
-        os.remove(file_name)
+        sys.stderr.write('Error occurred downloading reference file: %s' % e)
+        if os.path.exists(file_name):
+            os.remove(file_name)
+        sys.exit(1)
     return file_name
+
+
+def sha256sum(path):
+    digest = hashlib.sha256()
+    with open(path, 'rb') as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def main():
     parser = argparse.ArgumentParser(description='Create data manager JSON.')
     parser.add_argument('--out', dest='output', action='store', help='JSON filename')
-    parser.add_argument('--name', dest='name', action='store', default=uuid.uuid4(), help='Data table entry unique ID')
+    parser.add_argument('--name', dest='name', action='store', help='Genome/build identifier')
     parser.add_argument('--url', dest='url', action='store', help='Url to download gtf file from')
 
     args = parser.parse_args()
 
-    work_dir = os.getcwd()
-
     # Attempt to download gene annotation file from given url
     gene_annotation_file_name = url_download(args.url)
+    content_identity = 'gene_annotation_%s' % sha256sum(gene_annotation_file_name)
 
     # Update Data Manager JSON and write to file
     data_manager_entry = {
         'data_tables': {
             'gff_gene_annotations': {
-                'value': str(datetime.datetime.now()),
-                'dbkey': str(args.name),
+                'value': content_identity,
+                'dbkey': args.name or content_identity,
                 'name': gene_annotation_file_name,
-                'path': os.path.join(work_dir, gene_annotation_file_name)
+                'path': gene_annotation_file_name
             }
         }
     }
