@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
-<tool id="kma_build_index" name="KMA Index Builder" tool_type="manage_data" version="1.6.6+galaxy0" profile="24.1">
+<tool id="kma_build_index" name="KMA Index Builder" tool_type="manage_data" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="24.1">
     <description>kma index builder</description>
+    <macros>
+        <token name="@TOOL_VERSION@">1.6.6</token>
+        <token name="@VERSION_SUFFIX@">1</token>
+    </macros>
     <requirements>
-        <requirement type="package" version="1.6.6">kma</requirement>
+        <requirement type="package" version="@TOOL_VERSION@">kma</requirement>
     </requirements>
     <version_command>kma -v</version_command>
     <command detect_errors="exit_code">
@@ -18,13 +22,16 @@ kma_index
   -ML $ML
   -ht $ht
   -hq $hq
+  &&
+index_digest=\$({
+    printf '%s\n' 'kma_version=@TOOL_VERSION@' 'k=$k' 'k_t=$k_t' 'k_i=$k_i' 'ML=$ML' 'ht=$ht' 'hq=$hq' &&
+    sha256sum '$fasta' | cut -d ' ' -f 1;
+} | sha256sum | cut -d ' ' -f 1) &&
+sed "s/__KMA_INDEX_DIGEST__/\$index_digest/g" '$dmjson' > dm.json
     ]]></command>
     <configfiles>
-        <configfile filename="dm.json"><![CDATA[#slurp
-#from datetime import datetime
-#from hashlib import md5
-#set value=datetime.now().strftime("%Y-%m-%d") + "_" + md5($name.encode()).hexdigest()
-{"data_tables": {"kma_index": [{"value": "$value", "name": "$name", "path": "index_folder"}]}}
+        <configfile name="dmjson"><![CDATA[#slurp
+{"data_tables": {"kma_index": [{"value": "kma_@TOOL_VERSION@___KMA_INDEX_DIGEST__", "name": "$name", "path": "index_folder"}]}}
 ]]></configfile>
     </configfiles>
     <inputs>
@@ -46,14 +53,7 @@ kma_index
         <test>
             <param name="fasta" value="phiX174.fasta"/>
             <param name="name" value="index"/>
-            <output name="out_file" ftype="data_manager_json">
-                <assert_contents>
-                    <has_text text='"kma_index":' />
-                    <has_text text='"name": "index"' />
-                    <has_text text='"path": "index_folder"' />
-                    <has_text_matching expression='"value": "\d{4}-\d{2}-\d{2}_6a992d5529f459a44fee58c733255e86"' />
-                </assert_contents>
-            </output>
+            <output name="out_file" ftype="data_manager_json" file="kma_build_index.json"/>
         </test>
     </tests>
     <help><![CDATA[
