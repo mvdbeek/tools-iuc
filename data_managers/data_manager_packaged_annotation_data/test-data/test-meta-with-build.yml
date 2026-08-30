@@ -1,4 +1,5 @@
 name: Cancer variant data
+build: 1
 refgenome: hg19
 records:
   - id: hotspots.data

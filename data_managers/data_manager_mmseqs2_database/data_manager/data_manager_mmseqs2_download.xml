@@ -2,7 +2,7 @@
     <description></description>
     <macros>
         <token name="@TOOL_VERSION@">17-b804f</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@VERSION_SUFFIX@">1</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">mmseqs2</requirement>
@@ -11,31 +11,71 @@
 #set $database_name = str($database).split('/')[-1] if '/' in str($database) else str($database)
 
 mkdir -p '$out_file.extra_files_path'/'$database_name' &&
-mmseqs databases 
+mmseqs databases
         '$database' '$out_file.extra_files_path'/'$database_name'/database
         'tmp'
         --threads "\${GALAXY_SLOTS:-1}" &&
-cp '$dmjson' '$out_file'
+bash '$digest_script' '$out_file.extra_files_path/$database_name' '$dmjson' '$out_file' '$database_name'
     ]]></command>
-     <configfiles>
+    <configfiles>
+        <configfile name="digest_script"><![CDATA[
+set -euo pipefail
+database_dir="\$1"
+json_template="\$2"
+output="\$3"
+database_name="\$4"
+
+database_digest=\$(
+    cd "\$database_dir"
+    manifest_digest=\$(
+        find . -type f ! -path "./database.version" |
+            LC_ALL=C sort |
+            while IFS= read -r relative_path; do
+                file_digest=\$(sha256sum < "\$relative_path")
+                file_digest=\${file_digest%% *}
+                printf "%s\t%s\n" "\${relative_path#./}" "\$file_digest"
+            done |
+            sha256sum
+    )
+    printf "%s\n" "\${manifest_digest%% *}"
+)
+if [[ ! "\$database_digest" =~ ^[0-9a-f]{64}\$ ]]; then
+    echo "Invalid MMseqs2 database digest: \$database_digest" >&2
+    exit 1
+fi
+
+download_date=\$(date "+%Y-%m-%d")
+if [[ ! "\$download_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\$ ]]; then
+    echo "Invalid download date: \$download_date" >&2
+    exit 1
+fi
+
+database_path="\${database_dir%/*}/\${database_name}-sha256-\${database_digest}"
+mv "\$database_dir" "\$database_path"
+sed -e "s/__MMSEQS2_DATABASE_DIGEST__/\${database_digest}/g" \
+    -e "s/__MMSEQS2_DOWNLOAD_DATE__/\${download_date}/g" \
+    "\$json_template" > "\$output"
+]]></configfile>
         <configfile name="dmjson"><![CDATA[
-#from datetime import date
+#from json import dumps
+#set $digest_sentinel = "__MMSEQS2_DATABASE_DIGEST__"
+#set $date_sentinel = "__MMSEQS2_DOWNLOAD_DATE__"
 #set $database_name = str($database).split('/')[-1] if '/' in str($database) else str($database)
 {
-  "data_tables":{
-    "mmseqs2_databases":[
+  "data_tables": {
+    "mmseqs2_databases": [
       {
-        "value": "${database}-@TOOL_VERSION@-#echo date.today().strftime('%d%m%Y')#",
-        "name": "${database} #echo date.today().strftime('%d%m%Y')#",
-        "type": "${db_type}",
-        "taxonomy": "${db_taxonomy}",
-        "path": "$database_name",
-        "version": "@TOOL_VERSION@"
+        "value": #echo dumps("{}-@TOOL_VERSION@-sha256-{}".format(str($database), $digest_sentinel))#,
+        "name": #echo dumps("{} (downloaded {})".format(str($database), $date_sentinel))#,
+        "type": #echo dumps(str($db_type))#,
+        "taxonomy": #echo dumps(str($db_taxonomy))#,
+        "path": #echo dumps("{}-sha256-{}".format($database_name, $digest_sentinel))#,
+        "version": #echo dumps("@TOOL_VERSION@")#
       }
     ]
   }
-}]]>
-        </configfile>
+}
+]]></configfile>
     </configfiles>
     <inputs>
         <conditional name="db_name">
@@ -113,11 +153,11 @@ cp '$dmjson' '$out_file'
                 <assert_contents>
                     <has_text text='"mmseqs2_databases":'/>
                     <has_text text='"version": "@TOOL_VERSION@"'/>
-                    <has_text_matching expression='"value": "SILVA-@TOOL_VERSION@-[0-9]{8}"'/>
-                    <has_text_matching expression='"name": "SILVA [0-9]{8}"'/>
+                    <has_text_matching expression='"value": "SILVA-@TOOL_VERSION@-sha256-[0-9a-f]{64}"'/>
+                    <has_text_matching expression='"name": "SILVA \(downloaded [0-9]{4}-[0-9]{2}-[0-9]{2}\)"'/>
                     <has_text text='"type": "nucleotide"'/>
                     <has_text text='"taxonomy": "yes"'/>
-                    <has_text text='"path": "SILVA"'/>
+                    <has_text_matching expression='"path": "SILVA-sha256-[0-9a-f]{64}"'/>
                 </assert_contents>
             </output>
         </test>
@@ -132,17 +172,20 @@ cp '$dmjson' '$out_file'
                 <assert_contents>
                     <has_text text='"mmseqs2_databases":'/>
                     <has_text text='"version": "@TOOL_VERSION@"'/>
-                    <has_text_matching expression='"value": "UniProtKB/Swiss-Prot-@TOOL_VERSION@-[0-9]{8}"'/>
-                    <has_text_matching expression='"name": "UniProtKB/Swiss-Prot [0-9]{8}"'/>
+                    <has_text_matching expression='"value": "UniProtKB/Swiss-Prot-@TOOL_VERSION@-sha256-[0-9a-f]{64}"'/>
+                    <has_text_matching expression='"name": "UniProtKB/Swiss-Prot \(downloaded [0-9]{4}-[0-9]{2}-[0-9]{2}\)"'/>
                     <has_text text='"type": "aminoacid"'/>
                     <has_text text='"taxonomy": "yes"'/>
-                    <has_text text='"path": "Swiss-Prot"'/>
+                    <has_text_matching expression='"path": "Swiss-Prot-sha256-[0-9a-f]{64}"'/>
                 </assert_contents>
             </output>
         </test>
     </tests>
     <help><![CDATA[
 This tool downloads databases that can be used with MMseqs2.
+
+The installed database content digest identifies mutable upstream database aliases. The local download date is
+included only in the display name.
     ]]></help>
     <citations>
         <citation type="doi">10.1038/nbt.3988</citation>

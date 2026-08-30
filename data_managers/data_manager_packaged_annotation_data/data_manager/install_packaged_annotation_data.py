@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import datetime
+import hashlib
 import json
 import os
 import re
@@ -17,12 +17,13 @@ class PackagedAnnotationMeta():
         return cls(meta)
 
     def __init__(self, meta_dict):
-        if 'build' not in meta_dict:
-            meta_dict['build'] = datetime.date.today().isoformat()
+        self._build_missing = meta_dict.get('build') is None
+        if self._build_missing:
+            meta_dict.pop('build', None)
         if 'volume' not in meta_dict:
             meta_dict['volume'] = 1
 
-        required_meta = ['name', 'build', 'volume', 'refgenome', 'records']
+        required_meta = ['name', 'volume', 'refgenome', 'records']
         for key in required_meta:
             if not meta_dict.get(key):
                 raise KeyError(
@@ -39,7 +40,32 @@ class PackagedAnnotationMeta():
                         .format(record, key)
                     )
         self.meta = meta_dict
-        self.meta['id'] = self._get_id()
+        if not self._build_missing:
+            self.meta['id'] = self._get_id()
+
+    def set_fallback_build(self, target_directory):
+        if self._build_missing:
+            digest = hashlib.sha256()
+            for record in sorted(self.meta['records'], key=lambda item: item['id']):
+                record_identity = {
+                    key: record[key] for key in ('id', 'version', 'format')
+                }
+                digest.update(
+                    json.dumps(
+                        record_identity, sort_keys=True, separators=(',', ':')
+                    ).encode('utf-8')
+                )
+                digest.update(b'\0')
+                file_digest = hashlib.sha256()
+                with open(
+                    os.path.join(target_directory, record['id']), 'rb'
+                ) as handle:
+                    for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+                        file_digest.update(chunk)
+                digest.update(file_digest.digest())
+            self.meta['build'] = 'sha256-{}'.format(digest.hexdigest())
+            self.meta['id'] = self._get_id()
+            self._build_missing = False
 
     def _get_id(self):
         components = [
@@ -87,7 +113,7 @@ class PackagedAnnotationMeta():
 
 
 def fetch_data(source_url, target_file):
-    final_file, headers = urlretrieve(source_url, target_file)
+    urlretrieve(source_url, target_file)
 
 
 def meta_to_dm_records(meta, dbkey=None):
@@ -136,6 +162,7 @@ if __name__ == "__main__":
             os.path.join(args.target_directory, record['id'])
         )
 
+    meta.set_fallback_build(args.target_directory)
     meta.dump(os.path.join(args.target_directory, 'meta.yml'))
 
     # Finally, we prepare the metadata for the new data table record ...
@@ -148,3 +175,4 @@ if __name__ == "__main__":
     # ... and save it to the json results file
     with open(args.galaxy_datamanager_json, 'w') as fh:
         json.dump(data_manager_dict, fh, sort_keys=True)
+        fh.write('\n')

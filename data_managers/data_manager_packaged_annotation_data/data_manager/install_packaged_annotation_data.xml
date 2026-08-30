@@ -1,4 +1,4 @@
-<tool id="data_manager_packaged_annotation_data" name="Download and install packaged collections of genome annotation data" version="0.1" tool_type="manage_data" profile="20.05">
+<tool id="data_manager_packaged_annotation_data" name="Download and install packaged collections of genome annotation data" version="0.2" tool_type="manage_data" profile="20.05">
     <description>fetching</description>
     <requirements>
         <requirement type="package" version="3.9">python</requirement>
@@ -27,6 +27,11 @@ python '$__tool_directory__/install_packaged_annotation_data.py'
             <param name="metadata" value="test-meta.yml"/>
             <output name="out_file" file="from_test-meta.data_manager.json"/>
         </test>
+        <test>
+            <param name="dbkey" value="hg19"/>
+            <param name="metadata" value="test-meta-with-build.yml"/>
+            <output name="out_file" file="from_test-meta-with-build.data_manager.json"/>
+        </test>
     </tests>
     <help>
 **What it does**
@@ -36,5 +41,8 @@ not tightly bound to specific tools, but generic enough to be of use for many
 different tools.
 
 It populates the "packaged_annotation_data" data table.
+
+If package metadata does not declare a build, a stable build identifier is derived from the downloaded record
+content and identity-relevant record metadata.
     </help>
 </tool>

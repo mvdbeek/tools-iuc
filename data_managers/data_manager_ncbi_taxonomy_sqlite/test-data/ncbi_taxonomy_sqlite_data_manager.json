@@ -1,1 +1,1 @@
-{"data_tables": {"ncbi_taxonomy_sqlite": [{"value": "test", "path": "tmp/tax.ncbitaxonomy.sqlite", "description": "test database"}]}
+{"data_tables": {"ncbi_taxonomy_sqlite": [{"description": "test database", "path": "tmp/tax.ncbitaxonomy.sqlite", "value": "ncbitaxonomy_sha256_242739282959c86b045277a6763ebc92754253ab8834632c7ffcd951007dbf18"}]}}
