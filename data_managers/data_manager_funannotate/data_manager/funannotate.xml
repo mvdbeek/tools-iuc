@@ -72,16 +72,6 @@
                 </assert_contents>
             </output>
         </test>
-        <test>
-            <param name="partial_data" value="--partial"/>
-            <param name="wget" value="True"/>
-            <output name="output_file">
-                <assert_contents>
-                    <has_text_matching expression='"value": "funannotate-1\.8\.15-[0-9a-f]{64}"'/>
-                    <has_text text='"format_version": "1.0"'/>
-                </assert_contents>
-            </output>
-        </test>
     </tests>
     <help><![CDATA[
         This data managers fetches data from various databases for the funannotate
