@@ -12,7 +12,9 @@ def main():
     # Parse Command Line
     parser = argparse.ArgumentParser(description="Create data manager JSON.")
     parser.add_argument("--out", dest="output", action="store", help="JSON filename")
-    parser.add_argument("--version", dest="version", action="store", help="Version of the DB")
+    parser.add_argument(
+        "--version", dest="version", action="store", help="Version of the DB"
+    )
     parser.add_argument(
         "--test",
         action="store_true",
@@ -30,13 +32,11 @@ def main():
     workdir = params["output_data"][0]["extra_files_path"]
     os.mkdir(workdir)
 
-    time = datetime.utcnow().strftime("%Y-%m-%dT%H%M%SZ")
-    db_value = "db_from_{0}".format(time)
+    db_value = f"pharokka_db_v{args.version}"
     db_path = os.path.join(workdir, db_value)
 
     # create DB
     if args.test:  # the test only checks that the pharokka download script is available and copies the test DB
-
         # check if install_databases.py is there
         command_args = ["install_databases.py", "-h"]
         proc = subprocess.Popen(args=command_args, shell=False)
@@ -46,7 +46,9 @@ def main():
             sys.exit(return_code)
 
         # copy the test DB
-        test_db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "subset_pharokka_db")
+        test_db_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "subset_pharokka_db"
+        )
         command_args = ["cp", "-r", test_db_path, db_path]
     else:
         command_args = ["install_databases.py", "-o", db_path]
