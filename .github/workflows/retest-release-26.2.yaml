@@ -23,12 +23,16 @@ jobs:
       matrix:
         include:
           - repository: chopin2
+            tool_paths: tools/chopin2/chopin2.xml
             tool_ids: chopin2
           - repository: cat
+            tool_paths: tools/cat/cat_bins.xml tools/cat/cat_contigs.xml
             tool_ids: cat_bins,cat_contigs
           - repository: arriba
+            tool_paths: tools/arriba/arriba.xml
             tool_ids: arriba
           - repository: bayescan
+            tool_paths: tools/bayescan/bayescan.xml
             tool_ids: BayeScan
     services:
       postgres:
@@ -59,10 +63,10 @@ jobs:
           echo "Galaxy release_26.2 snapshot: $GALAXY_REVISION"
           echo "Original failing run: https://github.com/galaxyproject/tools-iuc/actions/runs/40652176226"
           python .github/retest-release-26.2/validate.py --list
-      - name: Rerun only the selected failures
+      - name: Install the same CI test tooling
         uses: galaxyproject/planemo-ci-action@8ff1373abef62a85243cae348976e89378959ac8 # v1.0.32, same as original run
         with:
-          mode: test
+          mode: setup
           create-cache: false
           mulled-cache-seed: false
           planemo-version: planemo==0.75.47
@@ -73,8 +77,22 @@ jobs:
           chunk-count: 1
           galaxy-slots: 4
           test_timeout: 900
-          # A commit SHA needs the archive installer, not git clone --branch.
-          additional-planemo-options: --no_cache_galaxy --failed --failed_json .github/retest-release-26.2/previous-failures.json
+      - name: Test the selected unchanged wrappers
+        env:
+          TOOL_PATHS: ${{ matrix.tool_paths }}
+          GALAXY_SLOTS: '4'
+        run: |
+          read -r -a tool_paths <<< "$TOOL_PATHS"
+          # --failed currently drops ExternalGalaxyToolTestCase entries.
+          # These wrapper files contain exactly the 12 selected test cases.
+          planemo test --biocontainers --no_dependency_resolution --no_conda_auto_init \
+            --docker_extra_volume ./ \
+            --database_connection postgresql://postgres:postgres@localhost:5432/galaxy \
+            --galaxy_source https://github.com/galaxyproject/galaxy \
+            --galaxy_branch "$GALAXY_REVISION" --galaxy_python_version 3.11 \
+            --no_cache_galaxy --test_timeout 900 \
+            --test_output_json upload/tool_test_output.json \
+            --test_output upload/tool_test_output.html "${tool_paths[@]}"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
