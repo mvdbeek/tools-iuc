@@ -1,0 +1,124 @@
+{
+  "tests": [
+    {
+      "id": "cat_bins-0",
+      "has_data": true,
+      "data": {
+        "tool_id": "cat_bins",
+        "tool_version": "5.2.3+galaxy0",
+        "test_index": 0,
+        "status": "error"
+      }
+    },
+    {
+      "id": "cat_bins-1",
+      "has_data": true,
+      "data": {
+        "tool_id": "cat_bins",
+        "tool_version": "5.2.3+galaxy0",
+        "test_index": 1,
+        "status": "error"
+      }
+    },
+    {
+      "id": "cat_bins-2",
+      "has_data": true,
+      "data": {
+        "tool_id": "cat_bins",
+        "tool_version": "5.2.3+galaxy0",
+        "test_index": 2,
+        "status": "error"
+      }
+    },
+    {
+      "id": "cat_bins-3",
+      "has_data": true,
+      "data": {
+        "tool_id": "cat_bins",
+        "tool_version": "5.2.3+galaxy0",
+        "test_index": 3,
+        "status": "error"
+      }
+    },
+    {
+      "id": "cat_contigs-0",
+      "has_data": true,
+      "data": {
+        "tool_id": "cat_contigs",
+        "tool_version": "5.2.3+galaxy0",
+        "test_index": 0,
+        "status": "error"
+      }
+    },
+    {
+      "id": "cat_contigs-1",
+      "has_data": true,
+      "data": {
+        "tool_id": "cat_contigs",
+        "tool_version": "5.2.3+galaxy0",
+        "test_index": 1,
+        "status": "error"
+      }
+    },
+    {
+      "id": "chopin2-0",
+      "has_data": true,
+      "data": {
+        "tool_id": "chopin2",
+        "tool_version": "1.0.9.post1+galaxy0",
+        "test_index": 0,
+        "status": "error"
+      }
+    },
+    {
+      "id": "chopin2-1",
+      "has_data": true,
+      "data": {
+        "tool_id": "chopin2",
+        "tool_version": "1.0.9.post1+galaxy0",
+        "test_index": 1,
+        "status": "error"
+      }
+    },
+    {
+      "id": "chopin2-2",
+      "has_data": true,
+      "data": {
+        "tool_id": "chopin2",
+        "tool_version": "1.0.9.post1+galaxy0",
+        "test_index": 2,
+        "status": "error"
+      }
+    },
+    {
+      "id": "arriba-0",
+      "has_data": true,
+      "data": {
+        "tool_id": "arriba",
+        "tool_version": "2.5.1+galaxy1",
+        "test_index": 0,
+        "status": "error"
+      }
+    },
+    {
+      "id": "arriba-1",
+      "has_data": true,
+      "data": {
+        "tool_id": "arriba",
+        "tool_version": "2.5.1+galaxy1",
+        "test_index": 1,
+        "status": "error"
+      }
+    },
+    {
+      "id": "BayeScan-0",
+      "has_data": true,
+      "data": {
+        "tool_id": "BayeScan",
+        "tool_version": "2.1",
+        "test_index": 0,
+        "status": "failure"
+      }
+    }
+  ]
+}

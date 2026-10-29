@@ -1,0 +1,91 @@
+name: Targeted Galaxy 26.2 compatibility retest
+run-name: Retest 12 compatibility failures against merged Galaxy 26.2 fixes
+on:
+  push:
+    branches: [ci/retest-release-26.2-compatibility]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: targeted-release-26.2-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  # Snapshot of release_26.2 after galaxyproject/galaxy#24535 was merged.
+  GALAXY_REVISION: 098349dd9da78bf1b87797a3c3ff9f2f4c5ea2e0
+jobs:
+  test:
+    if: github.repository == 'mvdbeek/tools-iuc'
+    name: Retest ${{ matrix.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repository: chopin2
+            tool_ids: chopin2
+          - repository: cat
+            tool_ids: cat_bins,cat_contigs
+          - repository: arriba
+            tool_ids: arriba
+          - repository: bayescan
+            tool_ids: BayeScan
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - name: Record test provenance
+        env:
+          TOOL_IDS: ${{ matrix.tool_ids }}
+        run: |
+          echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
+          git rev-parse HEAD
+          echo "Galaxy release_26.2 snapshot: $GALAXY_REVISION"
+          echo "Original failing run: https://github.com/galaxyproject/tools-iuc/actions/runs/40652176226"
+          python .github/retest-release-26.2/validate.py --list
+      - name: Rerun only the selected failures
+        uses: galaxyproject/planemo-ci-action@8ff1373abef62a85243cae348976e89378959ac8 # v1.0.32, same as original run
+        with:
+          mode: test
+          create-cache: false
+          mulled-cache-seed: false
+          planemo-version: planemo==0.75.47
+          repository-list: tools/${{ matrix.repository }}
+          galaxy-fork: galaxyproject
+          galaxy-branch: ${{ env.GALAXY_REVISION }}
+          chunk: 0
+          chunk-count: 1
+          galaxy-slots: 4
+          test_timeout: 900
+          # A commit SHA needs the archive installer, not git clone --branch.
+          additional-planemo-options: --no_cache_galaxy --failed --failed_json .github/retest-release-26.2/previous-failures.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: Compatibility retest ${{ matrix.repository }}
+          path: |
+            upload/
+            tool_list_chunk.txt
+            .github/retest-release-26.2/previous-failures.json
+          if-no-files-found: error
+      - name: Check every selected test ran and passed
+        if: always()
+        env:
+          TOOL_IDS: ${{ matrix.tool_ids }}
+        run: python .github/retest-release-26.2/validate.py
