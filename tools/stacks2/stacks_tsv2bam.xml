@@ -2,12 +2,14 @@
     <description>Sort reads by RAD locus</description>
     <macros>
         <import>macros.xml</import>
+        <import>element_identifier_macros.xml</import>
     </macros>
     <expand macro="requirements">
         <requirement type="package" version="1.13">samtools</requirement>
     </expand>
     <expand macro="version_cmd"/>
     <command detect_errors="aggressive"><![CDATA[
+@SAFE_ELEMENT_IDENTIFIER@
 @FASTQ_INPUT_FUNCTIONS@
 
 mkdir stacks_inputs stacks_outputs &&
